@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#EF000A</color>
+    <color name="colorAccentStart75">#E96A6B</color>
+    <color name="colorAccentStart">#ff7166</color>
+    <color name="colorAccentEnd">#ff1100</color>
+    <color name="thumbnail_placeholder_color">#22f44336</color>
+    <color name="PrimaryColor">#f44336</color>
+    <color name="White">#ffffff</color>
+    <color name="menuColor">#8C8C8C</color>
+    <color name="lightGray">#F2F2F2</color>
+    <color name="TitleColorBlack">#dd000000</color>
+    <color name="Orange">#FFA726</color><![CDATA[
+    -->
+]]>
+</resources>

@@ -1,0 +1,78 @@
+package com.github.kotvertolet.youtubeaudioplayer;
+
+import android.app.Application;
+import android.content.SharedPreferences;
+
+import com.github.kotvertolet.youtubeaudioplayer.custom.CachingTasksManager;
+import com.github.kotvertolet.youtubeaudioplayer.db.AppDatabase;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.ReceiverManager;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.TypefaceUtil;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+
+import java.io.File;
+
+public class App extends Application {
+
+    private static App instance;
+    private AppDatabase database;
+    private CommonUtils commonUtils;
+    private ReceiverManager receiverManager;
+    private SharedPreferences sharedPreferences;
+    private SimpleCache playerCache;
+    private CachingTasksManager cachingTasksManager;
+
+    public static App getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(App instance) {
+        App.instance = instance;
+    }
+
+    public AppDatabase getDatabase() {
+        return database;
+    }
+
+    public CommonUtils getCommonUtils() {
+        return commonUtils;
+    }
+
+    public ReceiverManager getReceiverManager() {
+        return receiverManager;
+    }
+
+    public SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
+    public SimpleCache getPlayerCache() {
+        return playerCache;
+    }
+
+    public CachingTasksManager getCachingTasksManager() {
+        return cachingTasksManager;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        setInstance(this);
+        database = AppDatabase.getInstance(this);
+        commonUtils = new CommonUtils(this);
+        receiverManager = ReceiverManager.getInstance(this);
+        sharedPreferences = getSharedPreferences(Constants.APP_PREFERENCES, MODE_PRIVATE);
+        playerCache = prepareCache();
+        cachingTasksManager = new CachingTasksManager();
+        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/Roboto-Regular.ttf");
+    }
+
+    private SimpleCache prepareCache() {
+        File cacheFolder = new File(App.getInstance().getCacheDir(), "media");
+        int cacheSize = sharedPreferences.getInt(Constants.PREFERENCE_CACHE_SIZE, 250);
+        LeastRecentlyUsedCacheEvictor cacheEvictor = new LeastRecentlyUsedCacheEvictor(cacheSize * 1000000);
+        return new SimpleCache(cacheFolder, cacheEvictor);
+    }
+}

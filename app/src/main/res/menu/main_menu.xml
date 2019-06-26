@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.main.MainActivity">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_white24dp"
+        android:title="@string/menu_action_search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_playlists"
+        android:icon="@drawable/ic_playlist_play_24dp"
+        android:orderInCategory="200"
+        android:title="@string/menu_action_playlists"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="300"
+        android:title="@string/menu_action_settings"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_clear_db"
+        android:orderInCategory="400"
+        android:title="@string/menu_action_clear_db"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_close_app"
+        android:orderInCategory="500"
+        android:title="@string/menu_action_close_app"
+        app:showAsAction="never"/>
+</menu>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingTop="8dp"
+    android:paddingRight="4dp"
+    android:paddingLeft="12dp"
+    android:paddingBottom="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/explore_item_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MOST POPULAR"
+        android:layout_marginLeft="4dp"
+        android:textAllCaps="true"
+        android:textColor="@color/TitleColorBlack"
+        android:textSize="14sp" />
+
+    <FrameLayout
+        android:id="@+id/tip"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_below="@+id/explore_item_header"
+        android:layout_width="32dp"
+        android:layout_height="3dp"
+        android:background="@drawable/explore_text_under_tip" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@+id/tip"
+        android:id="@+id/rv_most_popular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:textColor="@color/colorAccentStart75"
+        android:text="ShowAll"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:id="@+id/explore_item_show_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/explore_item_header"
+        android:layout_alignBottom="@+id/explore_item_header"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"/>
+</RelativeLayout>

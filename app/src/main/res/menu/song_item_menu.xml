@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.main.MainActivity">
+    <item
+        android:id="@+id/add_to_playlist"
+        android:title="@string/menu_action_add_to_playlist"
+        app:showAsAction="never" />
+</menu>

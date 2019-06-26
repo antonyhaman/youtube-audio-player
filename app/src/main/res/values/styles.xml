@@ -1,0 +1,93 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/White</item>
+        <!--<item name="colorPrimaryDark">@color/White</item>-->
+        <item name="colorAccent">@color/colorAccent</item>
+
+
+        <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/menuColor</item>
+
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="windowNoTitle">true</item>-->
+
+        <item name="android:actionBarStyle">@style/CustomActionBarTheme</item>
+        <item name="actionBarStyle">@style/CustomActionBarTheme</item>
+        <!--<item name="actionBarTheme">@style/CustomActionBarTheme</item>-->
+
+
+        <!--<item name="android:textViewStyle">@style/RobotoTextViewStyle</item>-->
+        <!--<item name="android:buttonStyle">@style/RobotoButtonStyle</item>-->
+        <!--<item name="buttonStyle">@style/RobotoButtonStyle</item>-->
+
+        <!--<item name="android:windowLightStatusBar">true</item>-->
+
+        <item name="dialogTheme">@style/AlertDialogTheme</item>
+        <!--<item name="alertDialogTheme">@style/AlertDialogTheme</item>-->
+    </style>
+
+
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="buttonBarPositiveButtonStyle">@style/Alert.Button.Positive</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Alert.Button.Neutral</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Neutral</item>
+    </style>
+
+    <style name="Alert.Button.Positive" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Alert.Button.Neutral" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomActionBarTheme" parent="@style/Theme.AppCompat.Light">
+        <item name="android:background">@color/White</item>
+        <item name="background">@color/White</item>
+        <item name="android:icon">@drawable/ic_youtube_icon_new</item>
+        <item name="icon">@drawable/ic_youtube_icon_new</item>
+        <item name="android:displayOptions">useLogo|showHome|showTitle</item>
+        <item name="displayOptions">useLogo|showHome|showTitle</item>
+        <item name="android:titleTextStyle">@style/CustomActionbarTitleStyle</item>
+        <item name="titleTextStyle">@style/CustomActionbarTitleStyle</item>
+    </style>
+
+    <style name="CustomActionbarTitleStyle" parent="@style/Theme.AppCompat.Light">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/TitleColorBlack</item>
+    </style>
+
+    <style name="CustomCheckboxTheme" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorAccentStart</item>
+    </style>
+
+    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
+        <!--<item name="windowActionBar">false</item>-->
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="TextViewAutoscroll">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+</resources>

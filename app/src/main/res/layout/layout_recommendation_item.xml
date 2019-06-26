@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="3dp"
+    android:layout_marginRight="5dp"
+    android:elevation="5dp"
+    android:background="@color/White"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:id="@+id/upper_part"
+        android:layout_width="168dp"
+        android:layout_height="94dp">
+
+        <ImageView
+            android:id="@+id/iv_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/thumbnail_placeholder_color"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="4dp"
+            android:layout_marginEnd="4dp"
+            android:paddingBottom="1dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:paddingTop="1dp"
+            android:textColor="@color/White"
+            android:textSize="10sp"
+            android:text="04:32"
+            android:layout_marginRight="4dp"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/lower_part"
+        android:layout_width="168dp"
+        android:layout_height="82dp"
+        android:layout_below="@id/upper_part">
+
+        <TextView
+            android:id="@+id/tv_player_song_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingStart="8dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="4dp"
+            android:text="Nirvana - In Bloom"
+            android:textColor="@color/TitleColorBlack"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_uploader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_player_song_title"
+            android:layout_toLeftOf="@+id/iv_popup_button"
+            android:maxLines="1"
+            android:paddingLeft="8dp"
+            android:paddingTop="0dp"
+            android:textColor="@color/TitleColorBlack"
+            android:textSize="10sp"
+            android:text="NirvanaVEVO"/>
+
+        <ImageView
+            android:id="@+id/iv_views"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_uploader"
+            android:paddingTop="3dp"
+            android:paddingLeft="6dp"
+            app:srcCompat="@drawable/ic_views_black_12dp"/>
+
+        <TextView
+            android:id="@+id/tv_views_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_uploader"
+            android:layout_toRightOf="@id/iv_views"
+            android:maxLines="1"
+            android:paddingLeft="4dp"
+            android:paddingTop="0dp"
+            android:textSize="12sp"
+            android:text="150.000"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_views_count"
+   >
+            <ImageView
+                android:id="@+id/iv_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dp"
+                android:paddingStart="6dp"
+                android:paddingTop="1dp"
+                android:src="@drawable/ic_thumb_up_black_24dp" />
+            <TextView
+                android:id="@+id/tv_likes_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/iv_like"
+                android:layout_toRightOf="@id/iv_like"
+                android:paddingLeft="3dp"
+                android:paddingStart="3dp"
+                android:textSize="10sp"
+                android:text="3950" />
+
+            <ImageView
+                android:id="@+id/iv_dislike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dp"
+                android:paddingStart="6dp"
+                android:paddingTop="1dp"
+                android:layout_toEndOf="@id/tv_likes_count"
+                android:layout_toRightOf="@id/tv_likes_count"
+                android:src="@drawable/ic_thumb_down_black_24dp" />
+            <TextView
+                android:id="@+id/tv_dislikes_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/iv_dislike"
+                android:layout_toRightOf="@id/iv_dislike"
+                android:paddingLeft="3dp"
+                android:paddingStart="3dp"
+                android:textSize="10sp"
+                android:text="3950" />
+        </RelativeLayout>
+        <!--<TextView-->
+            <!--android:id="@+id/explore_item_download_btn"-->
+            <!--android:layout_width="36dp"-->
+            <!--android:layout_height="36dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_below="@+id/iv_popup_button"-->
+            <!--android:background="@drawable/round_btn_background_drop_shadow"-->
+            <!--android:gravity="center"-->
+            <!--android:textColor="@color/TitleColorBlack"-->
+            <!--android:textSize="18sp"-->
+            <!--android:text=""/>-->
+
+        <ImageView
+            android:id="@+id/iv_popup_button"
+            android:layout_width="28dp"
+            android:layout_height="36dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textColor="@color/TitleColorBlack"
+            android:src="@drawable/ic_more_vert_black_24dp"
+            android:layout_alignParentRight="true" />
+
+        <!--<TextView-->
+            <!--android:id="@+id/iv_popup_button"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_alignParentTop="true"-->
+
+            <!--android:paddingLeft="4dp"-->
+            <!--android:paddingRight="4dp"-->
+
+            <!--android:text="@string/vertical_ellipsis"-->
+            <!--android:textAppearance="?android:textAppearanceLarge" />-->
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="64dp">
+
+    <ImageView
+        android:id="@+id/iv_notification_player_thumb"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"/>
+
+
+    <RelativeLayout
+        android:id="@+id/rl_notification_song_info_block"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/tv_notification_song_title"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Nirvana - In Bloom"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/TitleColorBlack"
+            android:textSize="14sp"
+            style="@style/TextViewAutoscroll"/>
+
+        <TextView
+            android:id="@+id/tv_notification_channel_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_notification_song_title"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="NirvanaVEVO"
+            android:textColor="@color/menuColor"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_notification_player_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_toRightOf="@id/rl_notification_song_info_block"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/rl_notification_song_info_block">
+
+        <ImageButton
+            android:id="@+id/ib_notification_player_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/click_effect_selector"
+            app:srcCompat="@drawable/ic_player_back_black_40dp" />
+
+        <ImageButton
+            android:id="@+id/ib_notification_player_play_pause"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/click_effect_selector"
+            app:srcCompat="@drawable/ic_player_play_black_40dp" />
+
+        <ImageButton
+            android:id="@+id/ib_notification_player_next"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/click_effect_selector"
+            app:srcCompat="@drawable/ic_player_next_black_40dp" />
+    </LinearLayout>
+
+</RelativeLayout>
