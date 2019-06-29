@@ -3,6 +3,7 @@ package com.github.kotvertolet.youtubeaudioplayer.activities.main;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -12,6 +13,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
+import com.github.kotvertolet.youtubeaudioplayer.custom.AsyncTaskResult;
 import com.github.kotvertolet.youtubeaudioplayer.custom.CachingTasksManager;
 import com.github.kotvertolet.youtubeaudioplayer.custom.exceptions.UserFriendly;
 import com.github.kotvertolet.youtubeaudioplayer.data.PlaylistWithSongs;
@@ -32,6 +34,8 @@ import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +114,6 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         if (songData.getStreamUrl() != null && cacheKeys.contains(url)) {
             if (audioStreamsUtils.isSongFullyCached(songData)) {
                 playPreparedStream(songData);
-                addSongToRecentsList(songData);
             }
             // Song may be still caching but if not we deleting the unfinished cache
             else if (!cachingTasksManager.hasTask(songData.getVideoId())) {
@@ -119,21 +122,37 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
             }
         } else checkInternetAndStartExtractionTask(songData);
 
+        addSongToRecentsList(songData);
     }
 
     private void addSongToRecentsList(YoutubeSongDto songData) {
-        MutableLiveData<Map<String, LinkedList<YoutubeSongDto>>> recommendationsViewModel =
-                RecommendationsViewModel.getInstance().getData();
-        // Create RECENTS list if there is no any
-        Map<String, LinkedList<YoutubeSongDto>> recommendationsMap = recommendationsViewModel.getValue();
-        if (!recommendationsMap.containsKey(RECOMMENDATIONS_RECENT)) {
-            recommendationsMap.put(RECOMMENDATIONS_RECENT, new LinkedList<>());
-        }
         songData.setLastPlayedTimestamp(System.currentTimeMillis());
-        App.getInstance().getDatabase().youtubeSongDao().insert(songData);
+        AsyncTask.execute(() -> {
+            App.getInstance().getDatabase().youtubeSongDao().insert(songData);
 
-//        LinkedList<YoutubeSongDto> youtubeSongDtos = recommendationsMap.get(RECOMMENDATIONS_RECENT);
-//        youtubeSongDtos.addFirst(songData);
+            MutableLiveData<Map<String, LinkedList<YoutubeSongDto>>> recommendationsViewModel =
+                        RecommendationsViewModel.getInstance().getData();
+                Map<String, LinkedList<YoutubeSongDto>> map = recommendationsViewModel.getValue();
+                List<YoutubeSongDto> recentsList = App.getInstance().getDatabase().youtubeSongDao().getLastPlayed(20);
+                if (recentsList == null) {
+                    recentsList = new LinkedList<>();
+                }
+                map.put(RECOMMENDATIONS_RECENT, new LinkedList<>(recentsList));
+            recommendationsViewModel.postValue(map);
+        });
+
+
+        // Create RECENTS list if there is no any
+//        Map<String, LinkedList<YoutubeSongDto>> recommendationsMap = recommendationsViewModel.getValue();
+//        if (!recommendationsMap.containsKey(RECOMMENDATIONS_RECENT)) {
+//            LinkedList<YoutubeSongDto> linkedList = new LinkedList<>();
+//            linkedList.add(songData);
+//            recommendationsMap.put(RECOMMENDATIONS_RECENT, linkedList);
+//        }
+//        else {
+//            recommendationsMap.get(RECOMMENDATIONS_RECENT).addFirst(songData);
+//
+//        }
 //        recommendationsViewModel.setValue(recommendationsMap);
     }
 
@@ -157,23 +176,8 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
                 }
             }
         });
-        songData.setLastPlayedTimestamp(System.currentTimeMillis());
-        App.getInstance().getDatabase().youtubeSongDao().insert(songData);
-
-//        // Create RECENTS list if there is no any
-//        MutableLiveData<Map<String, LinkedList<YoutubeSongDto>>> recommendationsViewModel =
-//                RecommendationsViewModel.getInstance().getData();
-//        Map<String, LinkedList<YoutubeSongDto>> recommendationsMap = recommendationsViewModel.getValue();
-//        if (!recommendationsMap.containsKey(RECOMMENDATIONS_RECENT)) {
-//            recommendationsMap.put(RECOMMENDATIONS_RECENT, new LinkedList<>());
-//        }
-//        // Add song to RECENTS if it's not there already
-//        LinkedList<YoutubeSongDto> recentList = recommendationsMap.get(RECOMMENDATIONS_RECENT);
-//        if (!recommendationsMap.get(RECOMMENDATIONS_RECENT).contains(songData)) {
-//            recentList.addFirst(songData);
-//        }
-//        recommendationsMap.put(RECOMMENDATIONS_RECENT, recentList);
-//        recommendationsViewModel.setValue(recommendationsMap);
+//        songData.setLastPlayedTimestamp(System.currentTimeMillis());
+//        App.getInstance().getDatabase().youtubeSongDao().insert(songData);
     }
 
     @Override

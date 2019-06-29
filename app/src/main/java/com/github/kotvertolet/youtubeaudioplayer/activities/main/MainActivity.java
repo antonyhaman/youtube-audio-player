@@ -149,15 +149,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         presenter = new MainActivityPresenterImpl(this, this);
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        //Toolbar toolbar = findViewById(R.id.toolbar_included);
-        //setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setLogo(R.drawable.ic_youtube_icon_new);
-//        actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setDisplayUseLogoEnabled(true);
-        //actionBar.setDisplayHomeAsUpEnabled(true);
-        //actionBar.setDisplayShowTitleEnabled(true);
-
         loadingIndicator = findViewById(R.id.pb_loading_indicator);
         presenter = new MainActivityPresenterImpl(this, this);
         utils = new CommonUtils(this);
@@ -165,9 +156,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         registerReceiver(playerStateBroadcastReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         showRecommendations();
         initPlayerSlidingPanel();
-
         Log.d(TAG, "Main activity has been created");
-
         registerReceivers();
     }
 

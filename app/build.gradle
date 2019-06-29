@@ -39,7 +39,6 @@ android {
             assemble.doLast {
                 copy {
                     from variant.outputs*.outputFile
-                    //for Windows
                     into getRootProject().getRootDir().toString()+"/apk/${variant.dirName}"
                 }
                 delete variant.outputs*.outputFile
@@ -57,7 +56,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0-beta02'
 
-    //Support
+    // Support
     implementation 'com.google.android.material:material:1.1.0-alpha07'
 
     // Paging

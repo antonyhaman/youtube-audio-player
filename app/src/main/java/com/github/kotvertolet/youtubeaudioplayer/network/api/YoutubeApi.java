@@ -3,6 +3,7 @@ package com.github.kotvertolet.youtubeaudioplayer.network.api;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtube.videos.list.YoutubeVideoListResponse;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtubeSearch.YoutubeApiSearchResponse;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -45,6 +46,6 @@ public interface YoutubeApi {
                                                             @Query("type") String type, @Query("order") String order);
 
     @GET("playlistItems")
-    Observable<YoutubeVideoListResponse> getPlaylistRx(@Query("key") String apiKey, @Query("part") String part,
-                                                       @Query("playlistId") String playlistId, @Query("maxResults") String maxResults);
+    Maybe<YoutubeVideoListResponse> getPlaylistRx(@Query("key") String apiKey, @Query("part") String part,
+                                                  @Query("playlistId") String playlistId, @Query("maxResults") String maxResults);
 }

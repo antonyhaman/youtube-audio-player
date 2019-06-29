@@ -19,12 +19,11 @@ public class App extends Application {
     private static App instance;
     private AppDatabase database;
     private CommonUtils commonUtils;
-    private ReceiverManager receiverManager;
     private SharedPreferences sharedPreferences;
     private SimpleCache playerCache;
     private CachingTasksManager cachingTasksManager;
 
-    public static App getInstance() {
+    public static synchronized App getInstance() {
         return instance;
     }
 
@@ -38,10 +37,6 @@ public class App extends Application {
 
     public CommonUtils getCommonUtils() {
         return commonUtils;
-    }
-
-    public ReceiverManager getReceiverManager() {
-        return receiverManager;
     }
 
     public SharedPreferences getSharedPreferences() {
@@ -62,7 +57,6 @@ public class App extends Application {
         setInstance(this);
         database = AppDatabase.getInstance(this);
         commonUtils = new CommonUtils(this);
-        receiverManager = ReceiverManager.getInstance(this);
         sharedPreferences = getSharedPreferences(Constants.APP_PREFERENCES, MODE_PRIVATE);
         playerCache = prepareCache();
         cachingTasksManager = new CachingTasksManager();

@@ -98,10 +98,9 @@ public class PlayerNotificationService extends Service {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+                NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
                 notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
                 nm.createNotificationChannel(notificationChannel);
-
                 builder.setCategory(Notification.CATEGORY_SERVICE);
             }
 
@@ -158,15 +157,6 @@ public class PlayerNotificationService extends Service {
         backIntent.putExtra(EXTRA_PLAYER_STATE_CODE, PlayerAction.BACK);
         startService(backIntent);
     }
-
-//    private String createNotificationChannel() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_SERVICE_ID,
-//                    getString(R.string.notification_channel_name),
-//                    NotificationManager.IMPORTANCE_DEFAULT);
-//            return notificationChannel.getId();
-//        } else return "";
-//    }
 
     @Nullable
     @Override

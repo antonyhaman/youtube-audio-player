@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import retrofit2.Callback;
@@ -91,7 +92,7 @@ public class YoutubeApiNetwork {
         return youtubeApi.getVideoInfo(key, part, chart, videoCategoryId, countryCode, maxResults).execute();
     }
 
-    public Observable<YoutubeVideoListResponse> getPlaylistRx(String apiKey, String part, String playlistId, String maxResults) {
+    public Maybe<YoutubeVideoListResponse> getPlaylistRx(String apiKey, String part, String playlistId, String maxResults) {
         return youtubeApi.getPlaylistRx(apiKey, part, playlistId, maxResults);
     }
 

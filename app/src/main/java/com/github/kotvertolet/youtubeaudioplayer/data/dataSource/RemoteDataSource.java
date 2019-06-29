@@ -9,6 +9,7 @@ import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 
 import java.io.IOException;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -66,7 +67,7 @@ public class RemoteDataSource {
         return youtubeApiNetwork.getVideoInfo(key, part, chart, videoCategoryId, countryCode, maxResults);
     }
 
-    public Observable<YoutubeVideoListResponse> getPlaylistRx(String apiKey, String part, String playlistId, String maxResults) {
+    public Maybe<YoutubeVideoListResponse> getPlaylistRx(String apiKey, String part, String playlistId, String maxResults) {
         return youtubeApiNetwork.getPlaylistRx(apiKey, part, playlistId, maxResults);
     }
 
@@ -78,15 +79,15 @@ public class RemoteDataSource {
         return searchSuggestionsNetwork.getSuggestionsRx(QUERY_SUGGESTIONS_OUTPUT, QUERY_SUGGESTIONS_DS, query);
     }
 
-    public Observable<YoutubeVideoListResponse> getTopTracksPlaylist() {
+    public Maybe<YoutubeVideoListResponse> getTopTracksPlaylist() {
         return getPlaylistRx(PLAYLIST_TOP_TRACKS_CHANNEL_ID);
     }
 
-    public Observable<YoutubeVideoListResponse> getMostViewedPlaylist() {
+    public Maybe<YoutubeVideoListResponse> getMostViewedPlaylist() {
         return getPlaylistRx(PLAYLIST_MOST_VIEWED_CHANNEL_ID);
     }
 
-    public Observable<YoutubeVideoListResponse> getNewMusicThisWeekPlaylist() {
+    public Maybe<YoutubeVideoListResponse> getNewMusicThisWeekPlaylist() {
         return getPlaylistRx(PLAYLIST_NEW_MUSIC_THIS_WEEK_CHANNEL_ID);
     }
 
@@ -100,7 +101,7 @@ public class RemoteDataSource {
                 String.format("%s,%s,%s", QUERY_PART_SNIPPET, QUERY_PART_CONTENT_DETAILS, QUERY_PART_STATISTICS), videoId, QUERY_PLAYLIST_MAX_RESULTS);
     }
 
-    private Observable<YoutubeVideoListResponse> getPlaylistRx(String channelId) {
+    private Maybe<YoutubeVideoListResponse> getPlaylistRx(String channelId) {
         return youtubeApiNetwork.getPlaylistRx(YOUTUBE_API_KEY, QUERY_PART_SNIPPET, channelId, QUERY_PLAYLIST_MAX_RESULTS);
     }
 

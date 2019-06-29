@@ -413,7 +413,7 @@ public class ExoPlayerService extends Service {
                     }
                     break;
                 default:
-                    Log.e("YT_PLAYER_DEBUG", "Unknown intent received: \n" + intent.toString());
+                    Log.e(TAG, "Unknown intent received: \n" + intent.toString());
             }
         }
     }
