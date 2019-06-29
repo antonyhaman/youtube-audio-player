@@ -12,6 +12,7 @@
 bin/
 gen/
 out/
+apk/debug
 
 # Gradle files
 .gradle/

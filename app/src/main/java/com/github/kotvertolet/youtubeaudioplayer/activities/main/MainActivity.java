@@ -71,6 +71,7 @@ import com.google.android.exoplayer2.Player;
 import com.jakewharton.rxbinding.view.RxView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -420,6 +421,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     public void onBackPressed() {
         resetActionBar();
         minimizePlayer();
+
+        // Collapsing search view
+        if (!searchView.isIconified()) {
+            searchView.onActionViewCollapsed();
+        }
+
         if (fm.getBackStackEntryCount() == 0) {
             if (backClicksCount.get() == 0) {
                 showToast("Press back button once more to close the app", Toast.LENGTH_SHORT);
@@ -569,16 +576,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                int multiplier = 1;
+                int controlsMultiplier = 1;
                 double thumbnailMultiplier = 1;
-                if (displayMetrics.xdpi > 429) {
-                    multiplier = 4;
+                if (displayMetrics.widthPixels > 1080) {
+                    controlsMultiplier = 4;
                     thumbnailMultiplier = 1.3;
                 }
 
                 transformThumbnail(slideOffset, thumbnailMultiplier);
                 transformInfo(slideOffset);
-                transformControls(slideOffset, multiplier);
+                transformControls(slideOffset, controlsMultiplier);
                 //transformChevron(slideOffset);
             }
 

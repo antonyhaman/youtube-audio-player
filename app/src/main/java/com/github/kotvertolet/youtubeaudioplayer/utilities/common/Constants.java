@@ -45,6 +45,7 @@ public class Constants {
     public final static String YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/";
     public final static String GOOGLE_SEARCH_SUGGESTIONS = "https://suggestqueries.google.com/";
 
+    //TODO: Put Youtube Data API v3 key here
     public final static String YOUTUBE_API_KEY = "";
 
     public final static String QUERY_PART_SNIPPET = "snippet";
