@@ -23,13 +23,14 @@ public class CachingTasksManager {
                 Set<String> videoIds = cacheTasksPool.keySet();
                 for (String videoId : videoIds) {
                     CacheTask cacheTask = cacheTasksPool.get(videoId);
+
                     if (cacheTask.isCached()) {
                         cacheTask.stop();
                         cacheTasksPool.remove(videoId);
                         Log.i(TAG, "Cache task evicted, video id: " + videoId);
                     }
                 }
-                evictHandler.postDelayed(this, 60000);
+                evictHandler.postDelayed(this, 30000);
             } else {
                 evictHandler.removeCallbacksAndMessages(null);
                 evictHandler = null;

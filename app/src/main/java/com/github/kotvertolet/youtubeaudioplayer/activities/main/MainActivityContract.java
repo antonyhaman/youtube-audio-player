@@ -44,8 +44,6 @@ public interface MainActivityContract {
 
         Observable<SearchSuggestionsResponse> getSearchSuggestions(String query);
 
-        //void preparePlaybackQueueAndPlay(List<YoutubeSongDto> list, int position);
-
         void preparePlaybackQueueAndPlay(PlaylistWithSongs playlistWithSongs, int position);
 
         void playPlaylistItem(int position);

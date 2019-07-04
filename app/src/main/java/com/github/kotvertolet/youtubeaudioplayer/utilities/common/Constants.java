@@ -18,15 +18,10 @@ public class Constants {
     public static final String PLAYER_ERROR_MESSAGE = "PLAYER_ERROR_MESSAGE";
     public static final String PLAYER_ERROR_THROWABLE = "PLAYER_ERROR_THROWABLE2";
 
-    public static final String PLAYER_CHANGE_TRACK_PROGRESS = "PLAYER_CHANGE_TRACK_PROGRESS";
     public static final String EXTRA_TRACK_DURATION = "EXTRA_TRACK_DURATION";
-    public static final String KEY_TRACK_CURRENT_POSITION = "KEY_TRACK_CURRENT_POSITION";
     public static final String EXTRA_PLAYER_STATE_CODE = "EXTRA_PLAYER_STATE_CODE";
 
     public static final String ACTION_PLAYER_CHANGE_STATE = "ACTION_PLAYER_CHANGE_STATE";
-
-    public static final String ACTION_NOTIFICATION = "ACTION_NOTIFICATION";
-
 
     public static final String ACTION_PLAYLIST_NAVIGATION = "ACTION_PLAYLIST_NAVIGATION";
     public static final String ACTION_PLAYER_STATE_CHANGED = "ACTION_PLAYER_STATE_CHANGED";

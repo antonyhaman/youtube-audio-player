@@ -140,20 +140,6 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
                 map.put(RECOMMENDATIONS_RECENT, new LinkedList<>(recentsList));
             recommendationsViewModel.postValue(map);
         });
-
-
-        // Create RECENTS list if there is no any
-//        Map<String, LinkedList<YoutubeSongDto>> recommendationsMap = recommendationsViewModel.getValue();
-//        if (!recommendationsMap.containsKey(RECOMMENDATIONS_RECENT)) {
-//            LinkedList<YoutubeSongDto> linkedList = new LinkedList<>();
-//            linkedList.add(songData);
-//            recommendationsMap.put(RECOMMENDATIONS_RECENT, linkedList);
-//        }
-//        else {
-//            recommendationsMap.get(RECOMMENDATIONS_RECENT).addFirst(songData);
-//
-//        }
-//        recommendationsViewModel.setValue(recommendationsMap);
     }
 
     @Override
@@ -176,8 +162,6 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
                 }
             }
         });
-//        songData.setLastPlayedTimestamp(System.currentTimeMillis());
-//        App.getInstance().getDatabase().youtubeSongDao().insert(songData);
     }
 
     @Override

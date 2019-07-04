@@ -35,6 +35,7 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 
 public class YoutubeRecommendationsFetchUtils {
 
+    private final String TAG = getClass().getSimpleName();
     private final static String DELETED_VIDEO = "Deleted video";
     private CommonUtils utils;
     private SplashActivityContract.Presenter presenter;
@@ -118,7 +119,7 @@ public class YoutubeRecommendationsFetchUtils {
                         error -> {
                             presenter.loadRecents(new HashMap<>());
                             error.printStackTrace();
-                            Log.e("RECOMMENDATIONS_FETCH", error.getMessage());
+                            Log.e(TAG, error.getMessage());
                         });
     }
 }

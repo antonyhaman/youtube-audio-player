@@ -60,7 +60,7 @@ public class App extends Application {
         sharedPreferences = getSharedPreferences(Constants.APP_PREFERENCES, MODE_PRIVATE);
         playerCache = prepareCache();
         cachingTasksManager = new CachingTasksManager();
-        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/Roboto-Regular.ttf");
+        //TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/Roboto-Regular.ttf");
     }
 
     private SimpleCache prepareCache() {

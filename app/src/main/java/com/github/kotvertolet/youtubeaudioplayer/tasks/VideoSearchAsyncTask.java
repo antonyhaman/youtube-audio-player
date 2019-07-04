@@ -26,14 +26,14 @@ public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResul
 
     private WeakReference<MainActivityContract.Presenter> presenter;
     private WeakReference<MainActivityContract.View> view;
-    private CommonUtils mCommonUtils;
-    private RemoteDataSource mRemoteDataSource;
+    private CommonUtils commonUtils;
+    private RemoteDataSource remoteDataSource;
 
     public VideoSearchAsyncTask(MainActivityContract.Presenter presenter, WeakReference<MainActivityContract.View> view, CommonUtils commonUtils) {
         this.presenter = new WeakReference<>(presenter);
         this.view = view;
-        mCommonUtils = commonUtils;
-        mRemoteDataSource = RemoteDataSource.getInstance();
+        this.commonUtils = commonUtils;
+        remoteDataSource = RemoteDataSource.getInstance();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResul
         AsyncTaskResult<List<YoutubeSongDto>> taskResult;
         YoutubeApiSearchResponse searchResponse;
         try {
-            Response<YoutubeApiSearchResponse> rawResponse = mRemoteDataSource.searchForVideo(strings[0]);
+            Response<YoutubeApiSearchResponse> rawResponse = remoteDataSource.searchForVideo(strings[0]);
             if (rawResponse != null && rawResponse.isSuccessful()) {
                 searchResponse = rawResponse.body();
                 ArrayList<String> idsList = new ArrayList<>();
@@ -50,16 +50,16 @@ public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResul
                 }
                 List<YoutubeSongDto> ytVideoData = new ArrayList<>();
                 YoutubeVideoListResponse videosListResponse;
-                videosListResponse = mRemoteDataSource.getBasicVideoInfo(TextUtils.join(",", idsList)).body();
+                videosListResponse = remoteDataSource.getBasicVideoInfo(TextUtils.join(",", idsList)).body();
 
                 for (VideoDataItem item : videosListResponse.getItems()) {
                     Snippet snippet = item.getSnippet();
                     ContentDetails contentDetails = item.getContentDetails();
                     Statistics stats = item.getStatistics();
-                    String duration = mCommonUtils.parseISO8601time(contentDetails.getDuration());
-                    String viewCount = mCommonUtils.formatYtViewsAndLikesString(stats.getViewCount());
-                    String likeCount = mCommonUtils.formatYtViewsAndLikesString(stats.getLikeCount());
-                    String dislikeCount = mCommonUtils.formatYtViewsAndLikesString(stats.getDislikeCount());
+                    String duration = commonUtils.parseISO8601time(contentDetails.getDuration());
+                    String viewCount = commonUtils.formatYtViewsAndLikesString(stats.getViewCount());
+                    String likeCount = commonUtils.formatYtViewsAndLikesString(stats.getLikeCount());
+                    String dislikeCount = commonUtils.formatYtViewsAndLikesString(stats.getDislikeCount());
                     ytVideoData.add(new YoutubeSongDto(item.getId(), snippet.getTitle(),
                             snippet.getChannelTitle(), duration, 0, snippet.getThumbnails().getHigh().getUrl(),
                             viewCount, likeCount, dislikeCount));

@@ -227,12 +227,13 @@ public class ExoPlayerService extends Service {
 
     private MediaSource prepareSimpleMediaSource(Uri uri, YoutubeSongDto songDto) {
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(USER_AGENT);
-        if (sharedPreferences.getBoolean(Constants.PREFERENCE_RESTRICT_MOBILE_NETWORK_CACHING, true)) {
-            if (utils.getNetworkClass().equals(NetworkType.TYPE_WIFI)
-                    && songDto.getDurationInSeconds() < 1800
-                    && !cacheTaskManager.hasTask(songDto.getVideoId())) {
+        if (songDto.getDurationInSeconds() < 1800 && !cacheTaskManager.hasTask(songDto.getVideoId())) {
+            if (sharedPreferences.getBoolean(Constants.PREFERENCE_RESTRICT_MOBILE_NETWORK_CACHING, true)) {
+                if (utils.getNetworkClass().equals(NetworkType.TYPE_WIFI)) {
+                    cacheTaskManager.addTaskAndStart(songDto, uri, simpleCache, dataSourceFactory.createDataSource());
+                }
+            } else
                 cacheTaskManager.addTaskAndStart(songDto, uri, simpleCache, dataSourceFactory.createDataSource());
-            }
         }
         return new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
     }

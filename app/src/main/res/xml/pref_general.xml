@@ -7,7 +7,7 @@
         android:title="@string/pref_title_load_recommendations"/>
 
     <SwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="@string/key_pref_save_in_cache_only_wifi"
         android:summary="@string/pref_description_save_in_cache_only_wifi"
         android:title="@string/pref_title_save_in_cache_only_wifi"/>

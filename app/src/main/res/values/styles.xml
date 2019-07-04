@@ -19,14 +19,22 @@
         <!--<item name="actionBarTheme">@style/CustomActionBarTheme</item>-->
 
 
-        <!--<item name="android:textViewStyle">@style/RobotoTextViewStyle</item>-->
-        <!--<item name="android:buttonStyle">@style/RobotoButtonStyle</item>-->
-        <!--<item name="buttonStyle">@style/RobotoButtonStyle</item>-->
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="buttonStyle">@style/RobotoButtonStyle</item>
 
         <!--<item name="android:windowLightStatusBar">true</item>-->
 
         <item name="dialogTheme">@style/AlertDialogTheme</item>
         <!--<item name="alertDialogTheme">@style/AlertDialogTheme</item>-->
+    </style>
+
+
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
 

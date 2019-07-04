@@ -423,9 +423,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         minimizePlayer();
 
         // Collapsing search view
-        if (!searchView.isIconified()) {
-            searchView.onActionViewCollapsed();
-        }
+//        if (!searchView.isIconified()) {
+//            searchView.onActionViewCollapsed();
+//        }
 
         if (fm.getBackStackEntryCount() == 0) {
             if (backClicksCount.get() == 0) {
