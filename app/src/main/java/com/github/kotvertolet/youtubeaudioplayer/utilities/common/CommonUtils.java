@@ -25,18 +25,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.data.NetworkType;
 
-import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
 
 import java.lang.ref.WeakReference;
 import java.text.ChoiceFormat;
 import java.text.NumberFormat;
-
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_2G;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_3G;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_4G;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_NOT_CONNECTED;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_WIFI;
 
 public class CommonUtils {
 

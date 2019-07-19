@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -29,7 +28,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -71,7 +69,6 @@ import com.google.android.exoplayer2.Player;
 import com.jakewharton.rxbinding.view.RxView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -105,7 +102,8 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.COLLAPSED;
 import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.EXPANDED;
 
-public class MainActivity extends AppCompatActivity implements MainActivityContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements MainActivityContract.View,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private final static String TAG = "YT_PLAYER_DEBUG";
     private static final AtomicInteger backClicksCount = new AtomicInteger();
@@ -125,10 +123,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     private AppCompatImageView ivPlayerThumb;
     private AppCompatSeekBar sbPlayerProgress;
     private AppCompatImageButton playerButtonPlayPause;
-    private TextView tvSongTitle;
-    private TextView tvSecondarySongTitle;
-    private TextView tvSongChannel;
-    private TextView tvSecondarySongChannel;
+    private TextView tvPlayerSongTitle;
+    private TextView tvPlayerSecondarySongTitle;
+    private TextView tvPlayerSongChannel;
+    private TextView tvPlayerSecondarySongChannel;
     private AppCompatImageButton acibRepeatDisabled;
     private AppCompatImageButton acibRepeatAll;
     private AppCompatImageButton acibRepeatOne;
@@ -159,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         initPlayerSlidingPanel();
         Log.d(TAG, "Main activity has been created");
         registerReceivers();
+        startExoPlayerService();
     }
 
     @Override
@@ -336,7 +335,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     public void showSearchResults(List<YoutubeSongDto> data) {
         showLoadingIndicator(false);
         minimizePlayer();
-        SearchResultsFragment addedFragment = (SearchResultsFragment) fm.findFragmentByTag(SearchResultsFragment.class.getSimpleName());
+        SearchResultsFragment addedFragment =
+                (SearchResultsFragment) fm.findFragmentByTag(SearchResultsFragment.class.getSimpleName());
         if (addedFragment == null) {
             SearchResultsFragment fragment = new SearchResultsFragment();
             FragmentTransaction ft = fm.beginTransaction();
@@ -349,7 +349,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
 
     @Override
     public void showPlaylistEditingFragment(YoutubeSongDto songDto) {
-        PlaylistEditingFragment addedFragment = (PlaylistEditingFragment) fm.findFragmentByTag(PlaylistEditingFragment.class.getSimpleName());
+        PlaylistEditingFragment addedFragment =
+                (PlaylistEditingFragment) fm.findFragmentByTag(PlaylistEditingFragment.class.getSimpleName());
         if (addedFragment == null) {
             PlaylistEditingFragment fragment = new PlaylistEditingFragment();
             Bundle bundle = new Bundle();
@@ -359,7 +360,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
             ft.replace(R.id.fragment_placeholder, fragment, fragment.getClass().getSimpleName());
             ft.addToBackStack(null);
             ft.commit();
-            //TODO: think about it
             minimizePlayer();
         }
     }
@@ -367,16 +367,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     @Override
     public void initPlayerSlider(YoutubeSongDto data) {
         //TODO: Get rid of trims, make in db
-        tvSongTitle.setText(data.getTitle().trim());
-        tvSecondarySongTitle.setText(data.getTitle().trim());
-        tvSongChannel.setText(data.getAuthor().trim());
-        tvSecondarySongChannel.setText(data.getAuthor());
+        tvPlayerSongTitle.setText(data.getTitle());
+        tvPlayerSecondarySongTitle.setText(data.getTitle());
+        tvPlayerSongChannel.setText(data.getAuthor());
+        tvPlayerSecondarySongChannel.setText(data.getAuthor());
         Glide.with(this).asBitmap().load(data.getThumbnail())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .override(300, 300)
                 .circleCrop()
                 .into(ivPlayerThumb);
-        //slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         SlidingUpPanelLayout.PanelState panelState = slidingUpPanelLayout.getPanelState();
         if (panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
             slidingUpPanelLayout.setPanelState(COLLAPSED);
@@ -422,11 +421,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         resetActionBar();
         minimizePlayer();
 
-        // Collapsing search view
+//        //Collapsing search view
 //        if (!searchView.isIconified()) {
 //            searchView.onActionViewCollapsed();
 //        }
-
         if (fm.getBackStackEntryCount() == 0) {
             if (backClicksCount.get() == 0) {
                 showToast("Press back button once more to close the app", Toast.LENGTH_SHORT);
@@ -484,11 +482,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         AppCompatImageButton buttonPlayerBack = findViewById(R.id.ib_player_back);
         playerButtonPlayPause = findViewById(R.id.ib_player_play_pause);
         AppCompatImageButton playerButtonNext = findViewById(R.id.ib_player_next);
-        tvSongTitle = findViewById(R.id.tv_player_song_title);
-        tvSongTitle.setSelected(true);
-        tvSongChannel = findViewById(R.id.tv_channel_title);
-        tvSecondarySongTitle = findViewById(R.id.tv_secondary_song_title);
-        tvSecondarySongChannel = findViewById(R.id.tv_secondary_channel_title);
+        tvPlayerSongTitle = findViewById(R.id.tv_player_song_title);
+        tvPlayerSongTitle.setSelected(true);
+        tvPlayerSongChannel = findViewById(R.id.tv_channel_title);
+        tvPlayerSecondarySongTitle = findViewById(R.id.tv_secondary_song_title);
+        tvPlayerSecondarySongChannel = findViewById(R.id.tv_secondary_channel_title);
         acibRepeatDisabled = findViewById(R.id.acib_repeat_disabled);
         acibRepeatAll = findViewById(R.id.acib_repeat_all_enabled);
         acibRepeatOne = findViewById(R.id.acib_repeat_one_enabled);
@@ -633,17 +631,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
 
     }
 
-    private void transformSeekbarBlock(float slideOffset) {
-        if (slideOffset > 0) {
-            ViewGroup.LayoutParams viewGrouplLayoutParams = rlSeeKBarBlock.getLayoutParams();
-            ViewGroup.MarginLayoutParams viewGroupMargins = (ViewGroup.MarginLayoutParams) viewGrouplLayoutParams;
-            float _margin_top_DIFFpx = utils.dpInPx(15);
-            int newMarginTop = (int) Math.ceil((slideOffset) * _margin_top_DIFFpx);
-            Log.wtf("NEW MARGIN", String.valueOf(newMarginTop));
-            viewGroupMargins.topMargin = newMarginTop;
-        }
-    }
-
     private void transformThumbnail(float slideOffset, double multiplier) {
         int initialDimensionsInPx = (int) utils.dpInPx(50);
         int initialLeftMargin = (int) (utils.dpInPx(60) * multiplier);
@@ -675,10 +662,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     private void transformInfo(float offset) {
         float mainAlpha = (float) (1.0 - offset * 2);
         float secondaryAlpha = (float) (offset * 1.4);
-        tvSongTitle.setAlpha(mainAlpha);
-        tvSongChannel.setAlpha(mainAlpha);
-        tvSecondarySongTitle.setAlpha(secondaryAlpha);
-        tvSecondarySongChannel.setAlpha(secondaryAlpha);
+        tvPlayerSongTitle.setAlpha(mainAlpha);
+        tvPlayerSongChannel.setAlpha(mainAlpha);
+        tvPlayerSecondarySongTitle.setAlpha(secondaryAlpha);
+        tvPlayerSecondarySongChannel.setAlpha(secondaryAlpha);
 //        isRepeatSwitcher.setAlpha(secondaryAlpha);
 //        isShuffleSwitcher.setAlpha(secondaryAlpha);
     }

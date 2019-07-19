@@ -51,7 +51,6 @@ public class PlaylistSelectorAdapter extends RecyclerView.Adapter<PlaylistSelect
         } else if (songsList.size() < 4) {
             Glide.with(holder.itemView).asBitmap().load(songsList.get(0).getThumbnail())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    //.override(90, 70)
                     .into(holder.ivDummyThumb);
             holder.ivDummyThumb.setVisibility(View.VISIBLE);
         } else {
@@ -61,25 +60,21 @@ public class PlaylistSelectorAdapter extends RecyclerView.Adapter<PlaylistSelect
                     case 0:
                         Glide.with(holder.itemView).asBitmap().load(songsList.get(i).getThumbnail())
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                //.override(70, 70)
                                 .into(holder.ivThumb1);
                         break;
                     case 1:
                         Glide.with(holder.itemView).asBitmap().load(songsList.get(i).getThumbnail())
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                //.override(70, 70)
                                 .into(holder.ivThumb2);
                         break;
                     case 2:
                         Glide.with(holder.itemView).asBitmap().load(songsList.get(i).getThumbnail())
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                //.override(70, 70)
                                 .into(holder.ivThumb3);
                         break;
                     case 3:
                         Glide.with(holder.itemView).asBitmap().load(songsList.get(i).getThumbnail())
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                //.override(70, 70)
                                 .into(holder.ivThumb4);
                         break;
                 }
@@ -126,12 +121,5 @@ public class PlaylistSelectorAdapter extends RecyclerView.Adapter<PlaylistSelect
                         dialog.dismiss();
                     });
         }
-
-//        @Override
-//        public void onClick(View v) {
-//            presenter.preparePlaybackQueueAndPlay(data.get(getAdapterPosition()), 0);
-//            dialog.dismiss();
-//            //PlaybackQueueViewModel.getInstance().getSongs().setValue(data.get(getAdapterPosition()).getSongs());
-//        }
     }
 }

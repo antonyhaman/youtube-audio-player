@@ -31,36 +31,36 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "${variant.name}-${variant.versionName}.apk"
-        }
-        variant.assembleProvider.configure { assemble ->
-            assemble.doLast {
-                copy {
-                    from variant.outputs*.outputFile
-                    into getRootProject().getRootDir().toString()+"/apk/${variant.dirName}"
-                }
-                delete variant.outputs*.outputFile
-            }
-        }
-    }
+//    applicationVariants.all { variant ->
+//        variant.outputs.all {
+//            outputFileName = "${variant.name}-${variant.versionName}.apk"
+//        }
+//        variant.assembleProvider.configure { assemble ->
+//            assemble.doLast {
+//                copy {
+//                    from variant.outputs*.outputFile
+//                    into getRootProject().getRootDir().toString()+"/apk/${variant.dirName}"
+//                }
+//                delete variant.outputs*.outputFile
+//            }
+//        }
+//    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Core
-    implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
-    implementation 'androidx.preference:preference:1.1.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.preference:preference:1.1.0-rc01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.vectordrawable:vectordrawable:1.1.0-beta02'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0-rc01'
 
     // Support
-    implementation 'com.google.android.material:material:1.1.0-alpha07'
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
 
     // Paging
-    implementation 'android.arch.paging:runtime:1.0.1'
+    //implementation 'android.arch.paging:runtime:1.0.1'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
@@ -107,5 +107,5 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     // YoutubeJExtractor
-    implementation 'com.github.kotvertolet:youtube-jextractor:0.1.6'
+    implementation 'com.github.kotvertolet:youtube-jextractor:0.1.8'
 }

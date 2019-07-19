@@ -57,8 +57,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
             editor.putBoolean(Constants.PREFERENCE_NO_RECOMMENDATIONS, Boolean.valueOf(newValueSt));
         } else if (getString(R.string.key_pref_save_in_cache_only_wifi).equals(prefKey)) {
             editor.putBoolean(Constants.PREFERENCE_RESTRICT_MOBILE_NETWORK_CACHING, Boolean.valueOf(newValueSt));
-        }
-        else {
+        } else {
             Log.e(getClass().getSimpleName(), String.format("Unknown preference with key '%s' detected", prefKey));
         }
         editor.apply();

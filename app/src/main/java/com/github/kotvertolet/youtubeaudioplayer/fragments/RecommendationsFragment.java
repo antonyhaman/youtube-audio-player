@@ -13,26 +13,15 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity;
 import com.github.kotvertolet.youtubeaudioplayer.adapters.recommendations.VerticalRecommendationsAdapter;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.RecommendationsViewModel;
-import com.github.kotvertolet.youtubeaudioplayer.db.AppDatabase;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.RECOMMENDATIONS_RECENT;
 
 public class RecommendationsFragment extends Fragment {
 

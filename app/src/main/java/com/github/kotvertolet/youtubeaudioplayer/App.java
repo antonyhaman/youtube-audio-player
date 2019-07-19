@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 
 import com.github.kotvertolet.youtubeaudioplayer.custom.CachingTasksManager;
 import com.github.kotvertolet.youtubeaudioplayer.db.AppDatabase;
-import com.github.kotvertolet.youtubeaudioplayer.utilities.ReceiverManager;
-import com.github.kotvertolet.youtubeaudioplayer.utilities.TypefaceUtil;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;

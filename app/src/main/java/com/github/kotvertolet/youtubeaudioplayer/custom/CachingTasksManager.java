@@ -66,7 +66,9 @@ public class CachingTasksManager {
     }
 
     public void stopAllTasks() {
-        evictHandler.removeCallbacksAndMessages(null);
+        if (evictHandler != null) {
+            evictHandler.removeCallbacksAndMessages(null);
+        }
         if (cacheTasksPool.size() > 0) {
             Set<String> videoIdsSet = cacheTasksPool.keySet();
             for (String videoId : videoIdsSet) {

@@ -47,6 +47,7 @@ public class CustomRecyclerView extends RecyclerView {
 
         final public int position;
         final public long id;
+
         public RecyclerViewContextMenuInfo(int position, long id) {
             this.position = position;
             this.id = id;

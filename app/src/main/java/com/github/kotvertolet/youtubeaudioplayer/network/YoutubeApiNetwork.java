@@ -14,11 +14,9 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
-import okhttp3.OkHttpClient;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;

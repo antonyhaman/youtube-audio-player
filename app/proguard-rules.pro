@@ -16,7 +16,7 @@
 #   public *;
 #}
 
--optimizationpasses 6
+-optimizationpasses 5
 -dontskipnonpubliclibraryclasses
 -dontskipnonpubliclibraryclassmembers
 -dontpreverify
@@ -30,7 +30,7 @@
 -dontwarn okhttp3.**
 -dontwarn okio.**
 
-## Joda Time
+# Joda Time
 -dontwarn org.joda.convert.**
 -dontwarn org.joda.time.**
 -keep class org.joda.time.** { *; }
@@ -68,3 +68,7 @@
 -dontwarn com.sothree.**
 -keep class com.sothree.**
 -keep interface com.sothree.**
+
+# Rhino
+-keep class org.mozilla.** { *; }
+-dontwarn org.mozilla.javascript.**

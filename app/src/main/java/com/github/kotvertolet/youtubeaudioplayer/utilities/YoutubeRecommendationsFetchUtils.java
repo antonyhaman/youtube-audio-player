@@ -16,7 +16,6 @@ import com.github.kotvertolet.youtubeaudioplayer.db.AppDatabase;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,10 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
@@ -35,8 +31,8 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 
 public class YoutubeRecommendationsFetchUtils {
 
-    private final String TAG = getClass().getSimpleName();
     private final static String DELETED_VIDEO = "Deleted video";
+    private final String TAG = getClass().getSimpleName();
     private CommonUtils utils;
     private SplashActivityContract.Presenter presenter;
     private RemoteDataSource remoteDataSource;

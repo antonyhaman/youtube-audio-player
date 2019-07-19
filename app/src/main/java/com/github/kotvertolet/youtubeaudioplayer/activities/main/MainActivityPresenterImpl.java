@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,7 +12,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
-import com.github.kotvertolet.youtubeaudioplayer.custom.AsyncTaskResult;
 import com.github.kotvertolet.youtubeaudioplayer.custom.CachingTasksManager;
 import com.github.kotvertolet.youtubeaudioplayer.custom.exceptions.UserFriendly;
 import com.github.kotvertolet.youtubeaudioplayer.data.PlaylistWithSongs;
@@ -22,7 +20,6 @@ import com.github.kotvertolet.youtubeaudioplayer.data.liveData.PlaylistsWithSong
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.RecommendationsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.SearchSuggestionsResponse;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
-import com.github.kotvertolet.youtubeaudioplayer.services.ExoPlayerService;
 import com.github.kotvertolet.youtubeaudioplayer.services.PlayerAction;
 import com.github.kotvertolet.youtubeaudioplayer.tasks.AudioStreamExtractionAsyncTask;
 import com.github.kotvertolet.youtubeaudioplayer.tasks.VideoSearchAsyncTask;
@@ -34,13 +31,10 @@ import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import io.reactivex.Observable;
 
@@ -79,7 +73,6 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
     public <T extends UserFriendly> void handleException(T exception) {
         // Hide spinner if it visible
         view.get().showLoadingIndicator(false);
-
         if (exception.getThrowable() != null) {
             exception.getThrowable().printStackTrace();
         }
@@ -91,7 +84,6 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
     @Override
     public void handleException(Exception exception) {
         exception.printStackTrace();
-
         // Hide spinner if it visible
         view.get().showLoadingIndicator(false);
         DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
@@ -131,37 +123,25 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
             App.getInstance().getDatabase().youtubeSongDao().insert(songData);
 
             MutableLiveData<Map<String, LinkedList<YoutubeSongDto>>> recommendationsViewModel =
-                        RecommendationsViewModel.getInstance().getData();
-                Map<String, LinkedList<YoutubeSongDto>> map = recommendationsViewModel.getValue();
-                List<YoutubeSongDto> recentsList = App.getInstance().getDatabase().youtubeSongDao().getLastPlayed(20);
-                if (recentsList == null) {
-                    recentsList = new LinkedList<>();
-                }
-                map.put(RECOMMENDATIONS_RECENT, new LinkedList<>(recentsList));
+                    RecommendationsViewModel.getInstance().getData();
+            Map<String, LinkedList<YoutubeSongDto>> map = recommendationsViewModel.getValue();
+            List<YoutubeSongDto> recentsList = App.getInstance().getDatabase().youtubeSongDao().getLastPlayed(20);
+            if (recentsList == null) {
+                recentsList = new LinkedList<>();
+            }
+            map.put(RECOMMENDATIONS_RECENT, new LinkedList<>(recentsList));
             recommendationsViewModel.postValue(map);
         });
     }
 
     @Override
     public void playPreparedStream(YoutubeSongDto songData) {
-        Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (!utils.isServiceRunning(ExoPlayerService.class)) {
-                    startExoPlayerService();
-                    handler.postDelayed(this, 100);
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.START);
-                    //bundle.putString(Constants.EXTRA_SONG, songData);
-                    bundle.putParcelable(Constants.EXTRA_SONG, songData);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle);
-                    // Preparing player UI
-                    view.get().initPlayerSlider(songData);
-                }
-            }
-        });
+        Bundle bundle = new Bundle();
+        bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.START);
+        bundle.putParcelable(Constants.EXTRA_SONG, songData);
+        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle);
+        // Preparing player UI
+        view.get().initPlayerSlider(songData);
     }
 
     @Override
@@ -174,7 +154,6 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
             return false;
         }
         view.get().showLoadingIndicator(true);
-
         new VideoSearchAsyncTask(this, view, utils).execute(searchQuery);
         return true;
     }

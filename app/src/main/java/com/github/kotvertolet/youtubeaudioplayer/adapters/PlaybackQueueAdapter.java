@@ -90,12 +90,6 @@ public class PlaybackQueueAdapter extends RecyclerView.Adapter<PlaybackQueueAdap
             tvLikesCount = itemView.findViewById(R.id.tv_likes_count);
             tvDislikesCount = itemView.findViewById(R.id.tv_dislikes_count);
             ivMenuButton = itemView.findViewById(R.id.iv_popup_button);
-
-//            RxView.clicks(itemView).throttleFirst(500, TimeUnit.MILLISECONDS)
-//                    .subscribe(oVoid -> presenter.prepareAudioStreamAndPlay(song));
-//
-//            RxView.clicks(ivMenuButton).throttleFirst(500, TimeUnit.MILLISECONDS)
-//                    .subscribe(oVoid -> addMenu(itemView));
             ivMenuButton.setOnClickListener(this);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
@@ -112,7 +106,6 @@ public class PlaybackQueueAdapter extends RecyclerView.Adapter<PlaybackQueueAdap
                     case R.id.add_to_playlist:
                         presenter.addToPlaylist(song);
                         return true;
-                    //TODO: Implement
                     case R.id.remove_from_playlist:
                         AsyncTask.execute(() -> App.getInstance().getDatabase().playlistSongsDao()
                                 .deleteByPlaylistAndSongId(playlistWithSongs.getPlaylist().getPlaylistId(), song.getVideoId()));

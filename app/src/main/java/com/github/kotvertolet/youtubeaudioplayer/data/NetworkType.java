@@ -5,5 +5,5 @@ public enum NetworkType {
     TYPE_WIFI,
     TYPE_2G,
     TYPE_3G,
-    TYPE_4G;
+    TYPE_4G
 }

@@ -9,7 +9,6 @@ import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.custom.exceptions.UserFriendlyException;
 import com.github.kotvertolet.youtubeaudioplayer.data.NetworkType;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
-import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor;
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException;
@@ -22,11 +21,6 @@ import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 
 import java.util.Collections;
 import java.util.List;
-
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_2G;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_3G;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_4G;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.NETWORK_TYPE_WIFI;
 
 public class AudioStreamsUtils {
 

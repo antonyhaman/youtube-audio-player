@@ -5,10 +5,12 @@ package com.github.kotvertolet.youtubeaudioplayer.utilities.common;
  */
 
 public class Constants {
+
+    //TODO: Put Youtube Data API v3 key here
+    public final static String YOUTUBE_API_KEY = "";
+
     public static final String APP_NAME = "Youtube audio player";
-
     public static final String ENCODING_UTF_8 = "UTF-8";
-
     public static final String NOTIFICATION_SERVICE_ID = "yt_audio_notification_channel";
     public static final int FOREGROUND_SERVICE_ID = 505;
     public static final String STREAM_URI = "STREAM_URI";
@@ -39,10 +41,6 @@ public class Constants {
     public final static String YOUTUBE_SITE_URL = "https://www.youtube.com/";
     public final static String YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/";
     public final static String GOOGLE_SEARCH_SUGGESTIONS = "https://suggestqueries.google.com/";
-
-    //TODO: Put Youtube Data API v3 key here
-    public final static String YOUTUBE_API_KEY = "";
-
     public final static String QUERY_PART_SNIPPET = "snippet";
     public final static String QUERY_PART_CONTENT_DETAILS = "contentDetails";
     public final static String QUERY_PART_STATISTICS = "statistics";
