@@ -76,6 +76,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -107,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
 
     private final static String TAG = "YT_PLAYER_DEBUG";
     private static final AtomicInteger backClicksCount = new AtomicInteger();
+    private AtomicBoolean isStopping = new AtomicBoolean(false);
     private final FragmentManager fm = getSupportFragmentManager();
     private final Handler mHandler = new Handler();
     private final Runnable backClickRunnable = () -> backClicksCount.set(0);
@@ -322,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                 }
                 return true;
             case R.id.action_close_app:
+                isStopping.getAndSet(true);
                 intent = new Intent(this, ExoPlayerService.class);
                 stopService(intent);
                 finish();
@@ -366,19 +369,20 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
 
     @Override
     public void initPlayerSlider(YoutubeSongDto data) {
-        //TODO: Get rid of trims, make in db
-        tvPlayerSongTitle.setText(data.getTitle());
-        tvPlayerSecondarySongTitle.setText(data.getTitle());
-        tvPlayerSongChannel.setText(data.getAuthor());
-        tvPlayerSecondarySongChannel.setText(data.getAuthor());
-        Glide.with(this).asBitmap().load(data.getThumbnail())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .override(300, 300)
-                .circleCrop()
-                .into(ivPlayerThumb);
-        SlidingUpPanelLayout.PanelState panelState = slidingUpPanelLayout.getPanelState();
-        if (panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-            slidingUpPanelLayout.setPanelState(COLLAPSED);
+        if (!isStopping.get()) {
+            tvPlayerSongTitle.setText(data.getTitle());
+            tvPlayerSecondarySongTitle.setText(data.getTitle());
+            tvPlayerSongChannel.setText(data.getAuthor());
+            tvPlayerSecondarySongChannel.setText(data.getAuthor());
+            Glide.with(this).asBitmap().load(data.getThumbnail())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .override(300, 300)
+                    .circleCrop()
+                    .into(ivPlayerThumb);
+            SlidingUpPanelLayout.PanelState panelState = slidingUpPanelLayout.getPanelState();
+            if (panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
+                slidingUpPanelLayout.setPanelState(COLLAPSED);
+            }
         }
     }
 
@@ -420,11 +424,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     public void onBackPressed() {
         resetActionBar();
         minimizePlayer();
-
-//        //Collapsing search view
-//        if (!searchView.isIconified()) {
-//            searchView.onActionViewCollapsed();
-//        }
         if (fm.getBackStackEntryCount() == 0) {
             if (backClicksCount.get() == 0) {
                 showToast("Press back button once more to close the app", Toast.LENGTH_SHORT);

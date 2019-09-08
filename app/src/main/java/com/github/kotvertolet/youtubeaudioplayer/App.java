@@ -21,7 +21,7 @@ public class App extends Application {
     private SimpleCache playerCache;
     private CachingTasksManager cachingTasksManager;
 
-    public static synchronized App getInstance() {
+    public static App getInstance() {
         return instance;
     }
 
@@ -58,7 +58,6 @@ public class App extends Application {
         sharedPreferences = getSharedPreferences(Constants.APP_PREFERENCES, MODE_PRIVATE);
         playerCache = prepareCache();
         cachingTasksManager = new CachingTasksManager();
-        //TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/Roboto-Regular.ttf");
     }
 
     private SimpleCache prepareCache() {

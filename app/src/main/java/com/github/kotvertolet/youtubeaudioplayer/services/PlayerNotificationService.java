@@ -276,7 +276,6 @@ public class PlayerNotificationService extends Service {
         notificationManager.notify(notificationId, builder.build());
     }
 
-
     public class PlayerStateBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

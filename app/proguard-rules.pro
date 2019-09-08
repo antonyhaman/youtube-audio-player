@@ -72,3 +72,6 @@
 # Rhino
 -keep class org.mozilla.** { *; }
 -dontwarn org.mozilla.javascript.**
+
+# YoutubeJExtractor
+-keep class com.github.kotvertolet.youtube-jextractor.*
