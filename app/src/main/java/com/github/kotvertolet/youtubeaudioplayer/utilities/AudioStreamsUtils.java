@@ -3,6 +3,7 @@ package com.github.kotvertolet.youtubeaudioplayer.utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.net.rtp.AudioStream;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
@@ -13,7 +14,7 @@ import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor;
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException;
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException;
-import com.github.kotvertolet.youtubejextractor.models.AudioStreamItem;
+import com.github.kotvertolet.youtubejextractor.models.AdaptiveAudioStream;
 import com.github.kotvertolet.youtubejextractor.models.StreamItem;
 import com.github.kotvertolet.youtubejextractor.models.youtube.videoData.YoutubeVideoData;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -67,7 +68,7 @@ public class AudioStreamsUtils {
     }
 
     private StreamItem getBestStreamForInternetType(YoutubeVideoData youtubeVideoData) throws UserFriendlyException {
-        List<AudioStreamItem> audioStreamsList = youtubeVideoData.getStreamingData().getAudioStreamItems();
+        List<AdaptiveAudioStream> audioStreamsList = youtubeVideoData.getStreamingData().getAdaptiveAudioStreams();
         if (audioStreamsList.size() > 0) {
             // Sorting streams by bitrate, from lowest to highest
             Collections.sort(audioStreamsList, (o1, o2) -> Integer.compare(o1.getBitrate(), o2.getBitrate()));
@@ -81,7 +82,7 @@ public class AudioStreamsUtils {
                 case 1:
                     return audioStreamsList.get(audioStreamsList.size() - 1);
                 case 2:
-                    for (AudioStreamItem streamItem : audioStreamsList) {
+                    for (AdaptiveAudioStream streamItem : audioStreamsList) {
                         int bitrate = streamItem.getBitrate();
                         if (bitrate > 95000 || streamItem.getBitrate() < 193000) {
                             return streamItem;
@@ -97,7 +98,7 @@ public class AudioStreamsUtils {
     }
 
 
-    private StreamItem getBestStreamByInternetType(List<AudioStreamItem> audioStreamsList) {
+    private StreamItem getBestStreamByInternetType(List<AdaptiveAudioStream> audioStreamsList) {
         NetworkType networkType = App.getInstance().getCommonUtils().getNetworkClass();
         // I've discovered that old devices has problems with playing high bitrate streams for some reason. SDK 18 threshold was selected blindly
         if (App.getInstance().getCommonUtils().getAndroidVersion() <= 18) {
@@ -108,7 +109,7 @@ public class AudioStreamsUtils {
                     return audioStreamsList.get(audioStreamsList.size() - 1);
                 case TYPE_4G:
                 case TYPE_3G:
-                    for (AudioStreamItem streamItem : audioStreamsList) {
+                    for (AdaptiveAudioStream streamItem : audioStreamsList) {
                         int bitrate = streamItem.getBitrate();
                         if (bitrate > 95000 || streamItem.getBitrate() < 193000) {
                             return streamItem;

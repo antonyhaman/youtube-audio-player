@@ -1,13 +1,9 @@
 package com.github.kotvertolet.youtubeaudioplayer.utilities.common;
 
-/**
- * Created by ahaman on 3/28/18.
- */
-
 public class Constants {
 
     //TODO: Put Youtube Data API v3 key here
-    public final static String YOUTUBE_API_KEY = "";
+    public final static String YOUTUBE_API_KEY = "AIzaSyDpTO_uR7-11s1FF9xQoru7f1i-M6dZiME";
 
     public static final String APP_NAME = "Youtube audio player";
     public static final String ENCODING_UTF_8 = "UTF-8";
