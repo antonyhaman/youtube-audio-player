@@ -3,7 +3,7 @@ package com.github.kotvertolet.youtubeaudioplayer.utilities.common;
 public class Constants {
 
     //TODO: Put Youtube Data API v3 key here
-    public final static String YOUTUBE_API_KEY = "AIzaSyDpTO_uR7-11s1FF9xQoru7f1i-M6dZiME";
+    public final static String YOUTUBE_API_KEY = "";
 
     public static final String APP_NAME = "Youtube audio player";
     public static final String ENCODING_UTF_8 = "UTF-8";
