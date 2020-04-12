@@ -25,7 +25,6 @@ public class SearchSuggestionsNetwork {
 
     private static SearchSuggestionsNetwork instance;
     private SearchSuggestionsApi suggestionsApi;
-    private Retrofit retrofit;
 
     private SearchSuggestionsNetwork() {
         Gson gson = new GsonBuilder()
@@ -33,7 +32,7 @@ public class SearchSuggestionsNetwork {
                 .setLenient()
                 .create();
 
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GOOGLE_SEARCH_SUGGESTIONS)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -49,7 +48,7 @@ public class SearchSuggestionsNetwork {
     }
 
     /**
-     * Method gets the suggestion for the query provided
+     * Method gets suggestions for a query provided by user
      *
      * @param output format of the output, for json should be 'firefox'
      * @param ds     restricts the search to the particular site (for youtube it's 'yt')
@@ -64,7 +63,7 @@ public class SearchSuggestionsNetwork {
         return suggestionsApi.getSuggestions(output, ds, query).execute();
     }
 
-    private class SuggestionsDeserializer implements JsonDeserializer<SearchSuggestionsResponse> {
+    private static class SuggestionsDeserializer implements JsonDeserializer<SearchSuggestionsResponse> {
         public SearchSuggestionsResponse deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
             String rawSt = json.toString();
             String[] suggestions = rawSt.replaceAll("\\[(.*?)\\[", "")

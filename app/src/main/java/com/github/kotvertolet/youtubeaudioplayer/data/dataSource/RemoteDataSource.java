@@ -5,6 +5,7 @@ import com.github.kotvertolet.youtubeaudioplayer.data.models.youtube.videos.list
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtubeSearch.YoutubeApiSearchResponse;
 import com.github.kotvertolet.youtubeaudioplayer.network.SearchSuggestionsNetwork;
 import com.github.kotvertolet.youtubeaudioplayer.network.YoutubeApiNetwork;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.YoutubeApiKeysProvider;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 
 import java.io.IOException;
@@ -23,7 +24,6 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.QUERY_PLAYLIST_MAX_RESULTS;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.QUERY_SUGGESTIONS_DS;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.QUERY_SUGGESTIONS_OUTPUT;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.YOUTUBE_API_KEY;
 
 public class RemoteDataSource {
 
@@ -43,8 +43,12 @@ public class RemoteDataSource {
         } else return instance;
     }
 
-    public Response<YoutubeApiSearchResponse> searchForVideo(String videoId) throws IOException {
-        return youtubeApiNetwork.getSearchResults(videoId);
+    public Response<YoutubeApiSearchResponse> searchYoutubeFirstPage(String query) throws IOException {
+        return youtubeApiNetwork.getSearchResultsForFirstPage(query);
+    }
+
+    public Response<YoutubeApiSearchResponse> searchYoutubeNextPage(String query, String nextPageToken) throws IOException {
+        return youtubeApiNetwork.getSearchResultsForNextPage(query, nextPageToken);
     }
 
     public Observable<YoutubeApiSearchResponse> searchForVideoRx(String videoId) {
@@ -92,17 +96,17 @@ public class RemoteDataSource {
     }
 
     public Response<YoutubeVideoListResponse> getBasicVideoInfo(String videoId) throws IOException {
-        return youtubeApiNetwork.getVideoInfo(Constants.YOUTUBE_API_KEY,
+        return youtubeApiNetwork.getVideoInfo(YoutubeApiKeysProvider.getInstance().getKey(),
                 String.format("%s,%s,%s", QUERY_PART_SNIPPET, QUERY_PART_CONTENT_DETAILS, QUERY_PART_STATISTICS), videoId);
     }
 
     public Observable<YoutubeVideoListResponse> getBasicVideoInfoRx(String videoId) {
-        return youtubeApiNetwork.getVideoInfoRx(YOUTUBE_API_KEY,
+        return youtubeApiNetwork.getVideoInfoRx(YoutubeApiKeysProvider.getInstance().getKey(),
                 String.format("%s,%s,%s", QUERY_PART_SNIPPET, QUERY_PART_CONTENT_DETAILS, QUERY_PART_STATISTICS), videoId, QUERY_PLAYLIST_MAX_RESULTS);
     }
 
     private Maybe<YoutubeVideoListResponse> getPlaylistRx(String channelId) {
-        return youtubeApiNetwork.getPlaylistRx(YOUTUBE_API_KEY, QUERY_PART_SNIPPET, channelId, QUERY_PLAYLIST_MAX_RESULTS);
+        return youtubeApiNetwork.getPlaylistRx(YoutubeApiKeysProvider.getInstance().getKey(), QUERY_PART_SNIPPET, channelId, QUERY_PLAYLIST_MAX_RESULTS);
     }
 
 

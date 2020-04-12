@@ -44,17 +44,17 @@
     <RelativeLayout
         android:id="@+id/lower_part"
         android:layout_width="168dp"
-        android:layout_height="82dp"
+        android:layout_height="90dp"
         android:layout_below="@id/upper_part">
 
         <TextView
             android:id="@+id/tv_player_song_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:paddingStart="8dp"
-            android:paddingLeft="8dp"
+            android:paddingEnd="8dp"
             android:paddingTop="4dp"
             android:text="Nirvana - In Bloom"
             android:textColor="@color/TitleColorBlack"
@@ -66,9 +66,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_player_song_title"
-            android:layout_toLeftOf="@+id/iv_popup_button"
+            android:layout_toStartOf="@+id/iv_popup_button"
             android:maxLines="1"
-            android:paddingLeft="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:paddingTop="0dp"
             android:textColor="@color/TitleColorBlack"
             android:textSize="10sp"
@@ -80,7 +81,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_uploader"
             android:paddingTop="3dp"
-            android:paddingLeft="6dp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             app:srcCompat="@drawable/ic_views_black_12dp"/>
 
         <TextView

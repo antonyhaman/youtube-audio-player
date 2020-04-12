@@ -4,6 +4,7 @@ import com.github.kotvertolet.youtubeaudioplayer.data.models.youtube.videos.list
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtubeSearch.Id;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtubeSearch.YoutubeApiSearchResponse;
 import com.github.kotvertolet.youtubeaudioplayer.network.api.YoutubeApi;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.YoutubeApiKeysProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -26,7 +27,6 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.QUERY_PART_SNIPPET;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.QUERY_SEARCH_MAX_RESULTS;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.QUERY_TYPE_VIDEO;
-import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.YOUTUBE_API_KEY;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.YOUTUBE_API_URL;
 
 
@@ -34,7 +34,6 @@ public class YoutubeApiNetwork {
 
     private static YoutubeApiNetwork instance;
     private YoutubeApi youtubeApi;
-    private Retrofit retrofit;
 
     private YoutubeApiNetwork() {
         Gson gson = new GsonBuilder()
@@ -42,7 +41,7 @@ public class YoutubeApiNetwork {
                 .setLenient()
                 .create();
 
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(YOUTUBE_API_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -57,16 +56,21 @@ public class YoutubeApiNetwork {
         } else return instance;
     }
 
-    public Response<YoutubeApiSearchResponse> getSearchResults(String query) throws IOException {
-        return youtubeApi.getSearchResults(YOUTUBE_API_KEY, QUERY_PART_SNIPPET, query, QUERY_SEARCH_MAX_RESULTS, QUERY_TYPE_VIDEO, QUERY_ORDER_RELEVANCE).execute();
+    public Response<YoutubeApiSearchResponse> getSearchResultsForFirstPage(String query) throws IOException {
+        return youtubeApi.getSearchResultsFirstPage(YoutubeApiKeysProvider.getInstance().getKey(), QUERY_PART_SNIPPET, query, QUERY_SEARCH_MAX_RESULTS, QUERY_TYPE_VIDEO, QUERY_ORDER_RELEVANCE).execute();
     }
+
+    public Response<YoutubeApiSearchResponse> getSearchResultsForNextPage(String query, String nextPakeToken) throws IOException {
+        return youtubeApi.getSearchResultsFirstPage(YoutubeApiKeysProvider.getInstance().getKey(), QUERY_PART_SNIPPET, query, QUERY_SEARCH_MAX_RESULTS, QUERY_TYPE_VIDEO, QUERY_ORDER_RELEVANCE, nextPakeToken).execute();
+    }
+
 
     public Observable<YoutubeApiSearchResponse> getSearchResultsRx(String query) {
-        return youtubeApi.getSearchResultsRx(YOUTUBE_API_KEY, QUERY_PART_SNIPPET, query, QUERY_SEARCH_MAX_RESULTS, QUERY_TYPE_VIDEO, QUERY_ORDER_RELEVANCE);
+        return youtubeApi.getSearchResultsRx(YoutubeApiKeysProvider.getInstance().getKey(), QUERY_PART_SNIPPET, query, QUERY_SEARCH_MAX_RESULTS, QUERY_TYPE_VIDEO, QUERY_ORDER_RELEVANCE);
     }
 
-    public void getSearchResults(String query, String pageToken, Callback<YoutubeApiSearchResponse> callback) {
-        youtubeApi.getSearchResults(YOUTUBE_API_KEY, QUERY_PART_SNIPPET, query, QUERY_SEARCH_MAX_RESULTS, QUERY_TYPE_VIDEO, QUERY_ORDER_RELEVANCE, pageToken).enqueue(callback);
+    public void getSearchResultsForFirstPage(String query, String pageToken, Callback<YoutubeApiSearchResponse> callback) {
+        youtubeApi.getSearchResultsFirstPage(YoutubeApiKeysProvider.getInstance().getKey(), QUERY_PART_SNIPPET, query, QUERY_SEARCH_MAX_RESULTS, QUERY_TYPE_VIDEO, QUERY_ORDER_RELEVANCE, pageToken).enqueue(callback);
     }
 
 

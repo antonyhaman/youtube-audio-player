@@ -30,15 +30,22 @@ public interface YoutubeApi {
                                                 @Query("regionCode") String countryCode, @Query("maxResults") int maxResults);
 
     @GET("search")
-    Call<YoutubeApiSearchResponse> getSearchResults(@Query("key") String apiKey, @Query("part") String part,
-                                                    @Query("q") String query, @Query("maxResults") int maxResults,
-                                                    @Query("type") String type, @Query("order") String order,
-                                                    @Query("pageToken") String pageToken);
+    Call<YoutubeApiSearchResponse> getSearchResultsFirstPage(@Query("key") String apiKey, @Query("part") String part,
+                                                             @Query("q") String query, @Query("maxResults") int maxResults,
+                                                             @Query("type") String type, @Query("order") String order,
+                                                             @Query("pageToken") String pageToken);
 
     @GET("search")
-    Call<YoutubeApiSearchResponse> getSearchResults(@Query("key") String apiKey, @Query("part") String part,
-                                                    @Query("q") String query, @Query("maxResults") int maxResults,
-                                                    @Query("type") String type, @Query("order") String order);
+    Call<YoutubeApiSearchResponse> getSearchResultsFirstPage(@Query("key") String apiKey, @Query("part") String part,
+                                                             @Query("q") String query, @Query("maxResults") int maxResults,
+                                                             @Query("type") String type, @Query("order") String order);
+
+    @GET("search")
+    Call<YoutubeApiSearchResponse> getSearchResultsNextPage(@Query("key") String apiKey, @Query("part") String part,
+                                                            @Query("q") String query, @Query("maxResults") int maxResults,
+                                                            @Query("type") String type, @Query("order") String order,
+                                                            @Query("nextPageToken") String nextPageToken);
+
 
     @GET("search")
     Observable<YoutubeApiSearchResponse> getSearchResultsRx(@Query("key") String apiKey, @Query("part") String part,

@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityContract;
 import com.github.kotvertolet.youtubeaudioplayer.custom.AsyncTaskResult;
 import com.github.kotvertolet.youtubeaudioplayer.data.dataSource.RemoteDataSource;
+import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtube.videos.list.ContentDetails;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtube.videos.list.Snippet;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtube.videos.list.Statistics;
@@ -22,7 +23,7 @@ import java.util.List;
 
 import retrofit2.Response;
 
-public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResult<List<YoutubeSongDto>>> {
+public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResult<YoutubeSearchResult>> {
 
     private WeakReference<MainActivityContract.Presenter> presenter;
     private WeakReference<MainActivityContract.View> view;
@@ -37,11 +38,19 @@ public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResul
     }
 
     @Override
-    protected AsyncTaskResult<List<YoutubeSongDto>> doInBackground(String... strings) {
-        AsyncTaskResult<List<YoutubeSongDto>> taskResult;
+    protected AsyncTaskResult<YoutubeSearchResult> doInBackground(String... strings) {
+        AsyncTaskResult<YoutubeSearchResult> taskResult;
         YoutubeApiSearchResponse searchResponse;
+        Response<YoutubeApiSearchResponse> rawResponse;
+        String query = strings[0];
         try {
-            Response<YoutubeApiSearchResponse> rawResponse = remoteDataSource.searchForVideo(strings[0]);
+            // strings.length > 1 means that strings contain nextPageToken
+            if (strings.length > 1) {
+                rawResponse = remoteDataSource.searchYoutubeNextPage(query, strings[1]);
+            }
+            else {
+                rawResponse = remoteDataSource.searchYoutubeFirstPage(query);
+            }
             if (rawResponse != null && rawResponse.isSuccessful()) {
                 searchResponse = rawResponse.body();
                 ArrayList<String> idsList = new ArrayList<>();
@@ -64,7 +73,7 @@ public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResul
                             snippet.getChannelTitle(), duration, 0, snippet.getThumbnails().getHigh().getUrl(),
                             viewCount, likeCount, dislikeCount));
                 }
-                taskResult = new AsyncTaskResult<>(ytVideoData);
+                taskResult = new AsyncTaskResult<>(new YoutubeSearchResult(ytVideoData, query, searchResponse.getNextPageToken()));
             } else {
                 throw new Exception(rawResponse.errorBody().string());
             }
@@ -76,7 +85,7 @@ public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResul
     }
 
     @Override
-    protected void onPostExecute(AsyncTaskResult<List<YoutubeSongDto>> taskResult) {
+    protected void onPostExecute(AsyncTaskResult<YoutubeSearchResult> taskResult) {
         Exception exception = taskResult.getError();
         if (exception != null) {
             presenter.get().handleException(exception);

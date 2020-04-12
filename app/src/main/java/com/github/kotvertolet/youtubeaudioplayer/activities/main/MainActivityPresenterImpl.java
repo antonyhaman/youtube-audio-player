@@ -145,16 +145,28 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
     }
 
     @Override
-    public boolean makeYoutubeSearch(String searchQuery) {
+    public boolean searchYoutubeFirstPage(String searchQuery) {
+        if (checkIfSearchIsPossible(searchQuery)) return false;
+        new VideoSearchAsyncTask(this, view, utils).execute(searchQuery);
+        return true;
+    }
+
+    private boolean checkIfSearchIsPossible(String searchQuery) {
         if (searchQuery.length() == 0) {
             callSimpleDialog(context.get(), R.string.empty_search_query_error_message, R.string.error);
-            return false;
+            return true;
         } else if (!utils.isNetworkAvailable()) {
             callSimpleDialog(context.get(), R.string.network_error_message, R.string.error);
-            return false;
+            return true;
         }
         view.get().showLoadingIndicator(true);
-        new VideoSearchAsyncTask(this, view, utils).execute(searchQuery);
+        return false;
+    }
+
+    @Override
+    public boolean searchYoutubeNextPage(String searchQuery, String nextPageToken) {
+        if (checkIfSearchIsPossible(searchQuery)) return false;
+        new VideoSearchAsyncTask(this, view, utils).execute(searchQuery, nextPageToken);
         return true;
     }
 

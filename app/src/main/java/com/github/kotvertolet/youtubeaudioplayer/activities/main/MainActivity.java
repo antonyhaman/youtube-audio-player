@@ -52,6 +52,7 @@ import com.github.kotvertolet.youtubeaudioplayer.data.liveData.AllPlaylistsAndSo
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.PlaylistsWithSongsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.RecommendationsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.SearchResultsViewModel;
+import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.PlaylistDto;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 import com.github.kotvertolet.youtubeaudioplayer.fragments.PlaylistEditingFragment;
@@ -235,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                     pendingSearchQuery = null;
                     // Do this trick to hide suggestions list
                     ((AutoCompleteTextView) searchView.findViewById(R.id.search_src_text)).dismissDropDown();
-                    return presenter.makeYoutubeSearch(searchView.getQuery().toString());
+                    return presenter.searchYoutubeFirstPage(searchView.getQuery().toString());
                 }
                 return false;
             }
@@ -255,7 +256,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                                         // Clearing the old suggestions before adding the new ones
                                         suggestions.clear();
                                         suggestions.addAll(tempList);
-                                        String[] columns = {BaseColumns._ID,
+                                        String[] columns = {
+                                                BaseColumns._ID,
                                                 SearchManager.SUGGEST_COLUMN_TEXT_1,
                                                 SearchManager.SUGGEST_COLUMN_INTENT_DATA,
                                         };
@@ -310,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                     recommendationsMap.remove(RECOMMENDATIONS_RECENT);
                     recommendationsViewModel.setValue(recommendationsMap);
                 }
-                showToast("Db is cleared", Toast.LENGTH_SHORT);
+                showToast("Database is cleared", Toast.LENGTH_SHORT);
                 return true;
             case R.id.action_playlists:
                 if (AllPlaylistsAndSongsViewModel.getInstance().getData().getValue().size() > 0) {
@@ -335,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     }
 
     @Override
-    public void showSearchResults(List<YoutubeSongDto> data) {
+    public void showSearchResults(YoutubeSearchResult data) {
         showLoadingIndicator(false);
         minimizePlayer();
         SearchResultsFragment addedFragment =
