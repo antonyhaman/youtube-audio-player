@@ -6,7 +6,7 @@ Youtube audio player for android - listen to your favorites songs on Youtube wit
 <img align="center" src="http://i.piccy.info/i9/832ca481e4691fb856fb71e5c3625c4c/1561825068/423976/1319854/Screenshot_1561824494.png" width=250 />
 
 ## How to install and use
-Just download [apk](https://github.com/kotvertolet/youtube-audio-player/blob/master/app/release/app-release-1.2.apk) and install it on your phone (you may need to allow unknown apps installation in your phone settings). This is it.
+Just download [apk](https://github.com/kotvertolet/youtube-audio-player/blob/master/app/release/app-release.apk) and install it on your phone (you may need to allow unknown apps installation in your phone settings). This is it.
 
 ## Requirements
 Minimum android version: 4.4 Kitkat (SDK level 19)
