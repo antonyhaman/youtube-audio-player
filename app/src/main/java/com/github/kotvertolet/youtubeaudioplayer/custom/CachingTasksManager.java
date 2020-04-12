@@ -11,6 +11,9 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This class manages audio caching and removing old and unused cached audio
+ */
 public class CachingTasksManager {
 
     private final String TAG = getClass().getSimpleName();
@@ -42,6 +45,14 @@ public class CachingTasksManager {
         cacheTasksPool = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Adds caching task into a queue and starts caching if this audio is not cached already
+     *
+     * @param songDto
+     * @param uri acts as unique identifier of audio track
+     * @param cache
+     * @param dataSource
+     */
     public void addTaskAndStart(YoutubeSongDto songDto, Uri uri, SimpleCache cache, DataSource dataSource) {
         String videoId = songDto.getVideoId();
         if (!cacheTasksPool.containsKey(videoId)) {

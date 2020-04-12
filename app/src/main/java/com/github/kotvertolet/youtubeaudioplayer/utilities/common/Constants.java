@@ -1,9 +1,12 @@
 package com.github.kotvertolet.youtubeaudioplayer.utilities.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Constants {
 
     //TODO: Put Youtube Data API v3 key here
-    public final static String YOUTUBE_API_KEY = "";
+    //public final static String YOUTUBE_API_KEY = "AIzaSyBnNjcvvkAKbifj3Yw2nmrzMJUALoNHxXM";
 
     public static final String APP_NAME = "Youtube audio player";
     public static final String ENCODING_UTF_8 = "UTF-8";

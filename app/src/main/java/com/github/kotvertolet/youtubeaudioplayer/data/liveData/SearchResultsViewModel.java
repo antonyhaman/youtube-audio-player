@@ -7,15 +7,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
-import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult;
 
 public class SearchResultsViewModel extends AndroidViewModel {
 
     private static SearchResultsViewModel INSTANCE;
-    private MutableLiveData<List<YoutubeSongDto>> data;
+    private MutableLiveData<YoutubeSearchResult> data;
 
     public SearchResultsViewModel(@NonNull Application application) {
         super(application);
@@ -29,10 +26,10 @@ public class SearchResultsViewModel extends AndroidViewModel {
         return INSTANCE;
     }
 
-    public MutableLiveData<List<YoutubeSongDto>> getData() {
+    public MutableLiveData<YoutubeSearchResult> getData() {
         if (data == null) {
             data = new MutableLiveData<>();
-            data.setValue(new ArrayList<>());
+            data.setValue(new YoutubeSearchResult(null, null, null));
         }
         return data;
     }

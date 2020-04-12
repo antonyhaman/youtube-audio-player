@@ -21,23 +21,25 @@ import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityContract;
 import com.github.kotvertolet.youtubeaudioplayer.adapters.SearchResultsAdapter;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.SearchResultsViewModel;
+import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 public class SearchResultsFragment extends Fragment {
 
     private WeakReference<Context> context;
-    private MutableLiveData<List<YoutubeSongDto>> adapterData;
+    private MutableLiveData<YoutubeSearchResult> searchResult;
     private SearchResultsAdapter adapter;
     private WeakReference<MainActivityContract.Presenter> presenter;
+    private boolean appendData = false;
+    private boolean isLoading = false;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        adapterData = SearchResultsViewModel.getInstance().getData();
+        searchResult = SearchResultsViewModel.getInstance().getData();
         return inflater.inflate(R.layout.layout_recommendations_fragment, container, false);
     }
 
@@ -51,7 +53,38 @@ public class SearchResultsFragment extends Fragment {
         adapter = new SearchResultsAdapter(presenter);
         rvSearchResults.setLayoutManager(linearLayoutManager);
         rvSearchResults.setAdapter(adapter);
-        adapterData.observe(this, youtubeSongDtos -> adapter.replaceData(adapterData.getValue()));
+        rvSearchResults.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = linearLayoutManager.getChildCount();
+                int totalItemCount = linearLayoutManager.getItemCount();
+                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+
+                if (getSearchResult() != null && getSearchResult().getNextPageToken() != null) {
+                    if (!isLoading
+                            && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0) {
+                        isLoading = true;
+                        appendData = true;
+                        presenter.get().searchYoutubeNextPage(getSearchResult().getQuery(), getSearchResult().getNextPageToken());
+                    }
+                }
+            }
+        });
+        searchResult.observe(this, youtubeSongDtos ->  {
+            if (appendData) {
+                adapter.addData(youtubeSongDtos.getSongs());
+                isLoading = false;
+                appendData = false;
+            }
+            else adapter.replaceData(youtubeSongDtos.getSongs());
+        });
     }
 
     @Override
@@ -63,7 +96,7 @@ public class SearchResultsFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if (item.getTitle().equals(getString(R.string.menu_action_add_to_playlist))) {
-            YoutubeSongDto youtubeSongDto = adapterData.getValue().get(adapter.getAdapterPosition());
+            YoutubeSongDto youtubeSongDto = getSearchResult().getSongs().get(adapter.getAdapterPosition());
             presenter.get().addToPlaylist(youtubeSongDto);
         }
         return super.onContextItemSelected(item);
@@ -73,5 +106,9 @@ public class SearchResultsFragment extends Fragment {
     public void onAttach(Context context) {
         this.context = new WeakReference<>(context);
         super.onAttach(context);
+    }
+
+    private YoutubeSearchResult getSearchResult() {
+        return searchResult.getValue();
     }
 }

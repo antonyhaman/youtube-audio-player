@@ -8,8 +8,8 @@ android {
         applicationId "com.github.kotvertolet.youtubeaudioplayer"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.2"
+        versionCode 2
+        versionName "0.1.1"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
@@ -30,21 +30,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-
-//    applicationVariants.all { variant ->
-//        variant.outputs.all {
-//            outputFileName = "${variant.name}-${variant.versionName}.apk"
-//        }
-//        variant.assembleProvider.configure { assemble ->
-//            assemble.doLast {
-//                copy {
-//                    from variant.outputs*.outputFile
-//                    into getRootProject().getRootDir().toString()+"/apk/${variant.dirName}"
-//                }
-//                delete variant.outputs*.outputFile
-//            }
-//        }
-//    }
 }
 
 dependencies {
@@ -74,6 +59,7 @@ dependencies {
     // Sliding panel
     implementation 'com.sothree.slidinguppanel:library:3.3.1'
 
+    //TODO: Remove when min sdk >= 21
     // Ripple for SDK 14+
     implementation 'com.balysv:material-ripple:1.0.2'
 

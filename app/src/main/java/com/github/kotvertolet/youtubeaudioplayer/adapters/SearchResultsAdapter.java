@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SearchResultsAdapter extends CustomRecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {
 
-    private List<YoutubeSongDto> songDtoList;
+    private List<YoutubeSongDto> currentAdapterData;
     private WeakReference<MainActivityContract.Presenter> presenter;
     private int adapterPosition;
 
@@ -45,7 +45,7 @@ public class SearchResultsAdapter extends CustomRecyclerView.Adapter<SearchResul
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        YoutubeSongDto item = songDtoList.get(position);
+        YoutubeSongDto item = currentAdapterData.get(position);
         String url = item.getThumbnail();
         Glide.with(holder.itemView).load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -62,13 +62,18 @@ public class SearchResultsAdapter extends CustomRecyclerView.Adapter<SearchResul
 
     @Override
     public int getItemCount() {
-        if (songDtoList == null)
+        if (currentAdapterData == null)
             return 0;
-        return songDtoList.size();
+        return currentAdapterData.size();
     }
 
-    public void replaceData(List<YoutubeSongDto> youtubeModels) {
-        songDtoList = youtubeModels;
+    public void replaceData(List<YoutubeSongDto> newAdapterData) {
+        currentAdapterData = newAdapterData;
+        notifyDataSetChanged();
+    }
+
+    public void addData(List<YoutubeSongDto> newAdapterData) {
+        currentAdapterData.addAll(newAdapterData);
         notifyDataSetChanged();
     }
 
@@ -105,7 +110,7 @@ public class SearchResultsAdapter extends CustomRecyclerView.Adapter<SearchResul
                     .subscribe(aVoid -> {
                         PlaylistWithSongs playlistWithSongs = new PlaylistWithSongs();
                         playlistWithSongs.setPlaylist(new PlaylistDto(Constants.DEFAULT_PLAYLIST_ID));
-                        playlistWithSongs.setSongs(songDtoList);
+                        playlistWithSongs.setSongs(currentAdapterData);
                         presenter.get().preparePlaybackQueueAndPlay(playlistWithSongs, getAdapterPosition());
                     });
             itemView.setOnLongClickListener(this);
