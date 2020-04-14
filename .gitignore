@@ -70,5 +70,6 @@ fastlane/readme.md
 # MacOs
 .DS_Store
 
-# Releases
+# Custom
 app/release
+converter/
