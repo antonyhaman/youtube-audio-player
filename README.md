@@ -10,7 +10,7 @@ Youtube audio player for android - listen to your favorites songs on Youtube wit
 - No ads
 - Do not require root
 - Adaptive audio quality based on your internet connection
-- Caches songs that you listed oftenly
+- Caches played audio to save traffic
 - You can create your own playlists with favourite music 
 
 ## How to install and use
