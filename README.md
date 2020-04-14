@@ -15,7 +15,8 @@ Youtube audio player for android - listen to your favorites songs on Youtube wit
 
 ## How to install
 The app is available on IzzyOnDroid repo and can be installed/updated via [F-Droid](https://f-droid.org/ru/). Check this out:
-[<img align="right" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width=150/>](https://apt.izzysoft.de/fdroid/index/apk/com.github.kotvertolet.youtubeaudioplayer)
+
+[<img align="center" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width=150/>](https://apt.izzysoft.de/fdroid/index/apk/com.github.kotvertolet.youtubeaudioplayer)
 
 
 Alternatively, you can pick the latest [release](https://github.com/kotvertolet/youtube-audio-player/releases), find 'app-release.apk
