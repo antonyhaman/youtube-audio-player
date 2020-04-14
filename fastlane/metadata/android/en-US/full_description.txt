@@ -1,5 +1,5 @@
 <p>Youtube audio player for android - listen to your favorites songs on Youtube without any ads and in a background!</p>
-<b>Features:</b>
+<p><b>Features:</b></p>
 <ul>
 <li>Plays audio from any youtube video in a background</li>
 <li>No ads</li>
