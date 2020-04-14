@@ -11,15 +11,6 @@ public class YoutubeApiKeysProvider {
     private Iterator<String> iter;
 
     private YoutubeApiKeysProvider() {
-        youtubeApiKeys.add("AIzaSyCuCljT7hV44ZIoqXfilkztwdq1ZomhLFw");
-        youtubeApiKeys.add("AIzaSyBnNjcvvkAKbifj3Yw2nmrzMJUALoNHxXM");
-        youtubeApiKeys.add("AIzaSyBlOh7WHHYbelElphSoUAvCahpjo_zQom0");
-        youtubeApiKeys.add("AIzaSyBp_5QruvEa4PiIWb788N-5_GuSCW_j7pc");
-        youtubeApiKeys.add("AIzaSyDpTO_uR7-11s1FF9xQoru7f1i-M6dZiME");
-        youtubeApiKeys.add("AIzaSyAzhHwinf8BN3zSDb-90BqQyv2bZhvzf6k");
-        youtubeApiKeys.add("AIzaSyCHxTxxmay9TD7izuLBQYrOGSrupura_tQ");
-        youtubeApiKeys.add("AIzaSyABcQuDwbl-3g-TxTgm4KBLACqpTAvGMg8");
-        youtubeApiKeys.add("AIzaSyAhqowApJizByAN-iXRJLIeXV21U_F1Fnk");
         iter = youtubeApiKeys.iterator();
     }
 

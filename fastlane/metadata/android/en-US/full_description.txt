@@ -1,6 +1,5 @@
-<h1 id="youtube-audio-player">Youtube audio player</h1>
-<p>Youtube audio player for android - listen to your favorites songs on Youtube without any ads and in a background! </p>
-<h2 id="features">Features</h2>
+<p>Youtube audio player for android - listen to your favorites songs on Youtube without any ads and in a background!</p>
+<b>Features:</b>
 <ul>
 <li>Plays audio from any youtube video in a background</li>
 <li>No ads</li>
