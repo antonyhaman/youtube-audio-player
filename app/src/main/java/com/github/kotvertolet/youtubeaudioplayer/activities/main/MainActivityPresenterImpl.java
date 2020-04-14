@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.custom.CachingTasksManager;
@@ -36,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.ACTION_PLAYER_CHANGE_STATE;
@@ -61,7 +60,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         viewContract.setPresenter(this);
         view = new WeakReference<>(viewContract);
         dataSource = RemoteDataSource.getInstance();
-        utils = new CommonUtils(context);
+        utils = new CommonUtils();
         audioStreamsUtils = new AudioStreamsUtils();
         SharedPreferences sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         playlistWrapper = new PlaylistWrapper(sharedPreferences);
@@ -78,7 +77,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         }
         DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
         utils.createAlertDialog(R.string.error, exception.getUserErrorMessage(),
-                true, R.string.button_ok, listener, 0, null).show();
+                true, R.string.button_ok, listener, 0, null, context.get()).show();
     }
 
     @Override
@@ -88,7 +87,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         view.get().showLoadingIndicator(false);
         DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
         utils.createAlertDialog(R.string.error, R.string.generic_error_message,
-                true, R.string.button_ok, listener, 0, null).show();
+                true, R.string.button_ok, listener, 0, null, context.get()).show();
     }
 
     @Override
@@ -139,7 +138,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         Bundle bundle = new Bundle();
         bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.START);
         bundle.putParcelable(Constants.EXTRA_SONG, songData);
-        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle);
+        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle, context.get());
         // Preparing player UI
         view.get().initPlayerSlider(songData);
     }
@@ -155,7 +154,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         if (searchQuery.length() == 0) {
             callSimpleDialog(context.get(), R.string.empty_search_query_error_message, R.string.error);
             return true;
-        } else if (!utils.isNetworkAvailable()) {
+        } else if (!utils.isNetworkAvailable(context.get())) {
             callSimpleDialog(context.get(), R.string.network_error_message, R.string.error);
             return true;
         }
@@ -230,12 +229,12 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
     }
 
     private void checkInternetAndStartExtractionTask(YoutubeSongDto songData) {
-        if (utils.isNetworkAvailable()) {
+        if (utils.isNetworkAvailable(context.get())) {
             new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData)
                     .execute(songData.getVideoId());
         } else {
             DialogInterface.OnClickListener positiveCallback = (dialog, which) -> {
-                if (utils.isNetworkAvailable()) {
+                if (utils.isNetworkAvailable(context.get())) {
                     new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData)
                             .execute(songData.getVideoId());
                 } else {
@@ -244,7 +243,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
             };
             DialogInterface.OnClickListener negativeCallback = (dialog, which) -> dialog.dismiss();
             utils.createAlertDialog(R.string.no_connection_error_message_title, R.string.network_error_message,
-                    false, R.string.try_again_message, positiveCallback, R.string.button_cancel, negativeCallback).show();
+                    false, R.string.try_again_message, positiveCallback, R.string.button_cancel, negativeCallback, context.get()).show();
         }
     }
 }

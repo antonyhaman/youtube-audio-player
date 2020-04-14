@@ -8,14 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityContract;
@@ -25,6 +17,14 @@ import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 
 import java.lang.ref.WeakReference;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchResultsFragment extends Fragment {
 
@@ -77,13 +77,12 @@ public class SearchResultsFragment extends Fragment {
                 }
             }
         });
-        searchResult.observe(this, youtubeSongDtos ->  {
+        searchResult.observe(this, youtubeSongDtos -> {
             if (appendData) {
                 adapter.addData(youtubeSongDtos.getSongs());
                 isLoading = false;
                 appendData = false;
-            }
-            else adapter.replaceData(youtubeSongDtos.getSongs());
+            } else adapter.replaceData(youtubeSongDtos.getSongs());
         });
     }
 
@@ -99,6 +98,10 @@ public class SearchResultsFragment extends Fragment {
             YoutubeSongDto youtubeSongDto = getSearchResult().getSongs().get(adapter.getAdapterPosition());
             presenter.get().addToPlaylist(youtubeSongDto);
         }
+        //TODO: Implement downloading
+//        else if(item.getTitle().equals(getString(R.string.menu_action_download))) {
+//           getSearchResult().getSongs().get(adapter.getAdapterPosition()).getStreamUrl();
+//        }
         return super.onContextItemSelected(item);
     }
 

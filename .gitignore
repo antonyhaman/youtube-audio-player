@@ -69,3 +69,6 @@ fastlane/readme.md
 
 # MacOs
 .DS_Store
+
+# Releases
+app/release

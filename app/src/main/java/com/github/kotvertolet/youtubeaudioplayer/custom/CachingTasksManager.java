@@ -49,7 +49,7 @@ public class CachingTasksManager {
      * Adds caching task into a queue and starts caching if this audio is not cached already
      *
      * @param songDto
-     * @param uri acts as unique identifier of audio track
+     * @param uri        acts as unique identifier of audio track
      * @param cache
      * @param dataSource
      */

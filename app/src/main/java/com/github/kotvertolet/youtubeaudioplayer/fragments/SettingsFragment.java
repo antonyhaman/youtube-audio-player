@@ -6,13 +6,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.github.kotvertolet.youtubeaudioplayer.R;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-
-import com.github.kotvertolet.youtubeaudioplayer.R;
-import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.APP_PREFERENCES;
 

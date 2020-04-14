@@ -7,9 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.kotvertolet.youtubeaudioplayer.R;
@@ -20,6 +17,9 @@ import com.jakewharton.rxbinding.view.RxView;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class PlaylistSelectorAdapter extends RecyclerView.Adapter<PlaylistSelectorAdapter.ViewHolder> {
 

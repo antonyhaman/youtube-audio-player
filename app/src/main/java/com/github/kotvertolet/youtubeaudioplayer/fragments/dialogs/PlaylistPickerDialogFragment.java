@@ -7,13 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityContract;
@@ -21,6 +14,13 @@ import com.github.kotvertolet.youtubeaudioplayer.adapters.PlaylistSelectorAdapte
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.AllPlaylistsAndSongsViewModel;
 
 import java.lang.ref.WeakReference;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class PlaylistPickerDialogFragment extends DialogFragment {
 

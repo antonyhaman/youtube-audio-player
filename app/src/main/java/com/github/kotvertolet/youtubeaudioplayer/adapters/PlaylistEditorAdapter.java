@@ -8,10 +8,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.data.PlaylistWithSongs;
 import com.github.kotvertolet.youtubeaudioplayer.fragments.dialogs.PlaylistCreationDialog;
@@ -19,6 +15,10 @@ import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class PlaylistEditorAdapter extends RecyclerView.Adapter<PlaylistEditorAdapter.ViewHolder> {
 

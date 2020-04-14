@@ -16,7 +16,7 @@
 #   public *;
 #}
 
--optimizationpasses 5
+-optimizationpasses 10
 -dontskipnonpubliclibraryclasses
 -dontskipnonpubliclibraryclassmembers
 -dontpreverify
@@ -97,7 +97,3 @@
 # Rhino
 -keep class org.mozilla.** { *; }
 -dontwarn org.mozilla.javascript.**
-
-# YoutubeJExtractor
--keep class com.github.kotvertolet.youtubejextractor.** { *; }
--keep com.github.tony19.** { *; }

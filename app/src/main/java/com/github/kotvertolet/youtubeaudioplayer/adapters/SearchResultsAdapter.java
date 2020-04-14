@@ -7,9 +7,6 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.kotvertolet.youtubeaudioplayer.R;
@@ -24,6 +21,9 @@ import com.jakewharton.rxbinding.view.RxView;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchResultsAdapter extends CustomRecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {
 
