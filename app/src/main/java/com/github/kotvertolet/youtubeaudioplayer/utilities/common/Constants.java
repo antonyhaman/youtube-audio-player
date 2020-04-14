@@ -1,8 +1,5 @@
 package com.github.kotvertolet.youtubeaudioplayer.utilities.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Constants {
 
     //TODO: Put Youtube Data API v3 key here
@@ -76,6 +73,7 @@ public class Constants {
     public final static int REPEAT_MODE_REPEAT_ONE = 2;
 
     public final static String[] RECOMMENDATIONS_HEADERS_ARR;
+
     static {
         RECOMMENDATIONS_HEADERS_ARR = new String[3];
         RECOMMENDATIONS_HEADERS_ARR[0] = RECOMMENDATIONS_TOP_TRACKS;

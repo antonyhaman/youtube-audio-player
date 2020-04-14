@@ -6,10 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityContract;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
@@ -17,6 +13,10 @@ import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class VerticalRecommendationsAdapter extends RecyclerView.Adapter<VerticalRecommendationsAdapter.ViewHolder> {
 

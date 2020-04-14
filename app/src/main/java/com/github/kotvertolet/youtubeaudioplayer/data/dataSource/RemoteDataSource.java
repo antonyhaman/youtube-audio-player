@@ -6,7 +6,6 @@ import com.github.kotvertolet.youtubeaudioplayer.data.models.youtubeSearch.Youtu
 import com.github.kotvertolet.youtubeaudioplayer.network.SearchSuggestionsNetwork;
 import com.github.kotvertolet.youtubeaudioplayer.network.YoutubeApiNetwork;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.YoutubeApiKeysProvider;
-import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 
 import java.io.IOException;
 

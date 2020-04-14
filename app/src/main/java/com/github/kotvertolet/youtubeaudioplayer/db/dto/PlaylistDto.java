@@ -1,11 +1,11 @@
 package com.github.kotvertolet.youtubeaudioplayer.db.dto;
 
+import java.io.Serializable;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import java.io.Serializable;
 
 @Entity(tableName = "playlist_data")
 public class PlaylistDto implements Serializable {

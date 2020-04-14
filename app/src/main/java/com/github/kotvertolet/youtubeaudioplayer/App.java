@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import com.github.kotvertolet.youtubeaudioplayer.custom.CachingTasksManager;
 import com.github.kotvertolet.youtubeaudioplayer.db.AppDatabase;
-import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
@@ -16,12 +15,11 @@ public class App extends Application {
 
     private static App instance;
     private AppDatabase database;
-    private CommonUtils commonUtils;
     private SharedPreferences sharedPreferences;
     private SimpleCache playerCache;
     private CachingTasksManager cachingTasksManager;
 
-    public static App getInstance() {
+    public static synchronized App getInstance() {
         return instance;
     }
 
@@ -31,10 +29,6 @@ public class App extends Application {
 
     public AppDatabase getDatabase() {
         return database;
-    }
-
-    public CommonUtils getCommonUtils() {
-        return commonUtils;
     }
 
     public SharedPreferences getSharedPreferences() {
@@ -54,7 +48,6 @@ public class App extends Application {
         super.onCreate();
         setInstance(this);
         database = AppDatabase.getInstance(this);
-        commonUtils = new CommonUtils(this);
         sharedPreferences = getSharedPreferences(Constants.APP_PREFERENCES, MODE_PRIVATE);
         playerCache = prepareCache();
         cachingTasksManager = new CachingTasksManager();

@@ -3,6 +3,7 @@ package com.github.kotvertolet.youtubeaudioplayer.tasks;
 import android.os.AsyncTask;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
+import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityContract;
 import com.github.kotvertolet.youtubeaudioplayer.custom.AsyncTaskResult;
 import com.github.kotvertolet.youtubeaudioplayer.custom.exceptions.UserFriendly;
@@ -39,7 +40,7 @@ public class AudioStreamExtractionAsyncTask extends AsyncTask<String, Void, Asyn
         AsyncTaskResult<YoutubeSongDto> taskResult;
         try {
             YoutubeVideoData youtubeVideoData = audioStreamsUtils.extractYoutubeVideoData(params[0]);
-            StreamItem streamItem = audioStreamsUtils.getAudioStreamForVideo(youtubeVideoData);
+            StreamItem streamItem = audioStreamsUtils.getAudioStreamForVideo(youtubeVideoData, ((MainActivity) view.get()));
             model.setStreamUrl(streamItem.getUrl());
             model.setDurationInSeconds(Integer.parseInt(youtubeVideoData.getVideoDetails().getLengthSeconds()));
             model.setLastPlayedTimestamp(System.currentTimeMillis());

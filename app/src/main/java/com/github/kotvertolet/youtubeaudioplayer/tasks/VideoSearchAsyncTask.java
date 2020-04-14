@@ -47,8 +47,7 @@ public class VideoSearchAsyncTask extends AsyncTask<String, Void, AsyncTaskResul
             // strings.length > 1 means that strings contain nextPageToken
             if (strings.length > 1) {
                 rawResponse = remoteDataSource.searchYoutubeNextPage(query, strings[1]);
-            }
-            else {
+            } else {
                 rawResponse = remoteDataSource.searchYoutubeFirstPage(query);
             }
             if (rawResponse != null && rawResponse.isSuccessful()) {

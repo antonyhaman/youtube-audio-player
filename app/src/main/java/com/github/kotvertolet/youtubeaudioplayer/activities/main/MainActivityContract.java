@@ -7,8 +7,6 @@ import com.github.kotvertolet.youtubeaudioplayer.data.models.SearchSuggestionsRe
 import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 
-import java.util.List;
-
 import io.reactivex.Observable;
 
 
@@ -30,7 +28,7 @@ public interface MainActivityContract {
 
         void initPlayerSlider(YoutubeSongDto data);
 
-        void setPlayerPlayingState(boolean isPlaying);
+        void setPlayButtonState(boolean isPlaying);
     }
 
     interface Presenter extends BasePresenter {

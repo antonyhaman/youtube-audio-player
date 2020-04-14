@@ -1,5 +1,6 @@
 package com.github.kotvertolet.youtubeaudioplayer.activities.splash;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 
 import com.github.kotvertolet.youtubeaudioplayer.R;
@@ -17,17 +18,17 @@ public class SplashActivityPresenterImpl implements SplashActivityContract.Prese
     private CommonUtils utils;
     private SplashActivityContract.View view;
 
-    public SplashActivityPresenterImpl(SplashActivityContract.View view, CommonUtils commonUtils) {
+    public SplashActivityPresenterImpl(SplashActivityContract.View view) {
         view.setPresenter(this);
         this.view = view;
-        utils = commonUtils;
+        utils = new CommonUtils();
     }
 
     @Override
     public <T extends UserFriendly> void handleException(T exception) {
         DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
         utils.createAlertDialog(R.string.error, exception.getUserErrorMessage(), true,
-                R.string.button_ok, listener, 0, null);
+                R.string.button_ok, listener, 0, null, ((Activity) view));
     }
 
     //TODO: Implement it
@@ -38,7 +39,7 @@ public class SplashActivityPresenterImpl implements SplashActivityContract.Prese
 
     @Override
     public void loadYoutubeRecommendations() {
-        if (utils.isNetworkAvailable()) {
+        if (utils.isNetworkAvailable(((Activity) view))) {
             new YoutubeRecommendationsFetchUtils(utils, this).fetchYoutubeRecommendations();
         } else {
             view.invokeNoConnectionDialog();

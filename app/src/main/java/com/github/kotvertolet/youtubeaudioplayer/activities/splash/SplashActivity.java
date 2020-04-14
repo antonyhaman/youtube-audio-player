@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.RecommendationsViewModel;
@@ -22,6 +19,9 @@ import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.APP_PREFERENCES;
 
@@ -38,9 +38,9 @@ public class SplashActivity extends AppCompatActivity implements SplashActivityC
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.layout_splash);
-        utils = new CommonUtils(this);
+        utils = new CommonUtils();
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        presenter = new SplashActivityPresenterImpl(this, utils);
+        presenter = new SplashActivityPresenterImpl(this);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class SplashActivity extends AppCompatActivity implements SplashActivityC
     @Override
     public void invokeNoConnectionDialog() {
         DialogInterface.OnClickListener positiveCallback = (dialog, which) -> {
-            if (utils.isNetworkAvailable()) {
+            if (utils.isNetworkAvailable(this)) {
                 new YoutubeRecommendationsFetchUtils(utils, presenter).fetchYoutubeRecommendations();
             } else {
                 invokeNoConnectionDialog();
@@ -78,6 +78,6 @@ public class SplashActivity extends AppCompatActivity implements SplashActivityC
         };
         DialogInterface.OnClickListener negativeCallback = (dialog, which) -> finish();
         utils.createAlertDialog(R.string.no_connection_error_message_title, R.string.network_error_message,
-                false, R.string.try_again_message, positiveCallback, R.string.button_cancel, negativeCallback).show();
+                false, R.string.try_again_message, positiveCallback, R.string.button_cancel, negativeCallback, this).show();
     }
 }

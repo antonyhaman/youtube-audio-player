@@ -2,11 +2,11 @@ package com.github.kotvertolet.youtubeaudioplayer.utilities;
 
 import android.content.SharedPreferences;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.github.kotvertolet.youtubeaudioplayer.data.PlaylistWithSongs;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.PlaylistsWithSongsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
+
+import androidx.lifecycle.MutableLiveData;
 
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PREFERENCE_REPEAT;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PREFERENCE_SHUFFLE;

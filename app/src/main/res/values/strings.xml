@@ -26,7 +26,8 @@
     <string name="menu_action_search">Search…</string>
     <string name="menu_action_clear_db">Clear database</string>
     <string name="menu_action_playlists">Playlists</string>
-    <string name="menu_action_add_to_playlist">Add To Playlist</string>
+    <string name="menu_action_add_to_playlist">Add to playlist</string>
+    <string name="menu_action_download">Download</string>
     <string name="menu_action_remove_from_playlist">Remove From Playlist</string>
     <string name="menu_action_close_app">Exit</string>
     <string name="error_no_stream_for_video">There is no audio stream for this video, it may be deleted or added too recently. Try again in a couple minutes or select an another video</string>

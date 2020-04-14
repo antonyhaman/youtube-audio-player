@@ -3,19 +3,19 @@ package com.github.kotvertolet.youtubeaudioplayer.db;
 import android.content.ContentValues;
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-import androidx.room.Database;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-
 import com.github.kotvertolet.youtubeaudioplayer.db.dao.PlaylistDao;
 import com.github.kotvertolet.youtubeaudioplayer.db.dao.PlaylistSongsDao;
 import com.github.kotvertolet.youtubeaudioplayer.db.dao.YoutubeSongDao;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.PlaylistDto;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.PlaylistSongDto;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
+
+import androidx.annotation.NonNull;
+import androidx.room.Database;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(entities = {YoutubeSongDto.class, PlaylistDto.class, PlaylistSongDto.class}, version = 7, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
