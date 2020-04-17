@@ -1,21 +1,20 @@
-<com.sothree.slidinguppanel.SlidingUpPanelLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:umanoPanelHeight="60dp"
-    sothree:umanoShadowHeight="4dp"
-    sothree:umanoParallaxOffset="200dp"
     sothree:umanoDragView="@+id/fl_drag_handle"
+    sothree:umanoOverlay="false"
+    sothree:umanoPanelHeight="60dp"
+    sothree:umanoParallaxOffset="200dp"
     sothree:umanoScrollableView="@+id/rv_generic"
-    sothree:umanoOverlay="false">
+    sothree:umanoShadowHeight="4dp">
 
 
     <!--FRAGMENT PLACEHOLDER WITH TOOLBAR-->
-    <include layout="@layout/layout_main"/>
+    <include layout="@layout/layout_main" />
     <!--BOTTOM PLAYER CONTENT WITH PLAYLIST-->
-    <include layout="@layout/layout_sliding_player"/>
+    <include layout="@layout/layout_sliding_player" />
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

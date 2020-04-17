@@ -32,11 +32,6 @@ allprojects {
 
 }
 
-//task clean(type: Delete) {
-//    delete rootProject.buildDir
-//    delete getRootProject().getRootDir().toString() + "/apk"
-//}
-
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         def requested = details.requested

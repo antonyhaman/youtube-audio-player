@@ -22,6 +22,9 @@ import org.joda.time.Period;
 
 import java.text.ChoiceFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -229,6 +232,10 @@ public class CommonUtils {
         drawable.draw(canvas);
 
         return bitmap;
+    }
+
+    public String createChannelId() {
+        return String.valueOf(Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.US).format(new Date())));
     }
 }
 

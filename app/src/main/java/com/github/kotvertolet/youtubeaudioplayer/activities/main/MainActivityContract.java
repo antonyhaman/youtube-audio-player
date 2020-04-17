@@ -45,6 +45,8 @@ public interface MainActivityContract {
 
         Observable<SearchSuggestionsResponse> getSearchSuggestions(String query);
 
+        void downloadStream(YoutubeSongDto songData);
+
         void preparePlaybackQueueAndPlay(PlaylistWithSongs playlistWithSongs, int position);
 
         void playPlaylistItem(int position);

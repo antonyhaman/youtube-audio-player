@@ -3,6 +3,7 @@ package com.github.kotvertolet.youtubeaudioplayer.activities.main;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.github.kotvertolet.youtubeaudioplayer.data.liveData.PlaylistsWithSong
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.RecommendationsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.SearchSuggestionsResponse;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
+import com.github.kotvertolet.youtubeaudioplayer.services.ExoDownloadService;
 import com.github.kotvertolet.youtubeaudioplayer.services.PlayerAction;
 import com.github.kotvertolet.youtubeaudioplayer.tasks.AudioStreamExtractionAsyncTask;
 import com.github.kotvertolet.youtubeaudioplayer.tasks.VideoSearchAsyncTask;
@@ -25,10 +27,13 @@ import com.github.kotvertolet.youtubeaudioplayer.utilities.AudioStreamsUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.PlaylistWrapper;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
+import com.google.android.exoplayer2.offline.DownloadRequest;
+import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +102,8 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
 
     @Override
     public void prepareAudioStreamAndPlay(YoutubeSongDto songData) {
+        AudioStreamExtractionAsyncTask.Callback callback = (result) -> playPreparedStream(result.getResult());
+
         String url = songData.getStreamUrl();
         // Check if song is cached
         Set<String> cacheKeys = simpleCache.getKeys();
@@ -109,9 +116,9 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
             // Song may be still caching but if not we deleting the unfinished cache
             else if (!cachingTasksManager.hasTask(songData.getVideoId())) {
                 CacheUtil.remove(simpleCache, url);
-                checkInternetAndStartExtractionTask(songData);
+                checkInternetAndStartExtractionTask(songData, callback);
             }
-        } else checkInternetAndStartExtractionTask(songData);
+        } else checkInternetAndStartExtractionTask(songData, callback);
 
         addSongToRecentsList(songData);
     }
@@ -175,6 +182,29 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
     }
 
     @Override
+    public void downloadStream(YoutubeSongDto songData) {
+
+        AudioStreamExtractionAsyncTask.Callback callback = (taskResult) -> {
+            Uri uri = Uri.parse(songData.getStreamUrl());
+            DownloadRequest downloadRequest = new DownloadRequest(
+                    uri.toString(),
+                    DownloadRequest.TYPE_PROGRESSIVE,
+                    uri,
+                    /* streamKeys= */ Collections.emptyList(),
+                    /* customCacheKey= */ null,
+                    null);
+
+            DownloadService.sendAddDownload(
+                    context.get(), ExoDownloadService.class, downloadRequest, /* foreground= */ false);
+        };
+        checkInternetAndStartExtractionTask(songData, callback);
+
+        new CommonUtils().isServiceRunning(ExoDownloadService.class, App.getInstance());
+
+
+    }
+
+    @Override
     public void preparePlaybackQueueAndPlay(PlaylistWithSongs playlistWithSongs, int position) {
         PlaylistsWithSongsViewModel playlistsWithSongsViewModel = PlaylistsWithSongsViewModel.getInstance();
         MutableLiveData<PlaylistWithSongs> playlistWithSongsMutableLiveData = playlistsWithSongsViewModel.getPlaylist();
@@ -228,17 +258,17 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         view.get().showPlaylistEditingFragment(videoDataDto);
     }
 
-    private void checkInternetAndStartExtractionTask(YoutubeSongDto songData) {
+    private void checkInternetAndStartExtractionTask(YoutubeSongDto songData, AudioStreamExtractionAsyncTask.Callback callback) {
         if (utils.isNetworkAvailable(context.get())) {
-            new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData)
+            new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData, callback)
                     .execute(songData.getVideoId());
         } else {
             DialogInterface.OnClickListener positiveCallback = (dialog, which) -> {
                 if (utils.isNetworkAvailable(context.get())) {
-                    new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData)
+                    new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData, callback)
                             .execute(songData.getVideoId());
                 } else {
-                    checkInternetAndStartExtractionTask(songData);
+                    checkInternetAndStartExtractionTask(songData, callback);
                 }
             };
             DialogInterface.OnClickListener negativeCallback = (dialog, which) -> dialog.dismiss();

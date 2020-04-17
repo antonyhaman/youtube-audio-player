@@ -21,12 +21,17 @@ public class AudioStreamExtractionAsyncTask extends AsyncTask<String, Void, Asyn
     private WeakReference<MainActivityContract.View> view;
     private AudioStreamsUtils audioStreamsUtils;
     private YoutubeSongDto model;
+    private AudioStreamExtractionAsyncTask.Callback callback;
 
-    public AudioStreamExtractionAsyncTask(MainActivityContract.Presenter presenter, WeakReference<MainActivityContract.View> view, AudioStreamsUtils audioStreamsUtils, YoutubeSongDto model) {
+    public AudioStreamExtractionAsyncTask(MainActivityContract.Presenter presenter,
+                                          WeakReference<MainActivityContract.View> view,
+                                          AudioStreamsUtils audioStreamsUtils, YoutubeSongDto model,
+                                          AudioStreamExtractionAsyncTask.Callback callback) {
         this.presenter = new WeakReference<>(presenter);
         this.view = view;
         this.audioStreamsUtils = audioStreamsUtils;
         this.model = model;
+        this.callback = callback;
     }
 
     @Override
@@ -64,7 +69,11 @@ public class AudioStreamExtractionAsyncTask extends AsyncTask<String, Void, Asyn
                 presenter.get().handleException(ex);
             } else presenter.get().handleException(exception);
         } else {
-            presenter.get().playPreparedStream(model);
+            callback.call(taskResult);
         }
+    }
+
+    public interface Callback {
+        void call(AsyncTaskResult<YoutubeSongDto> taskResult);
     }
 }

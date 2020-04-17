@@ -11,6 +11,9 @@ public class YoutubeApiKeysProvider {
     private Iterator<String> iter;
 
     private YoutubeApiKeysProvider() {
+        if (youtubeApiKeys.size() == 0) {
+            throw new Error("Add youtube data api keys first!");
+        }
         iter = youtubeApiKeys.iterator();
     }
 

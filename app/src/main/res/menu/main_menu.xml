@@ -20,7 +20,7 @@
         android:id="@+id/action_settings"
         android:orderInCategory="300"
         android:title="@string/menu_action_settings"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_clear_db"
@@ -32,5 +32,5 @@
         android:id="@+id/action_close_app"
         android:orderInCategory="500"
         android:title="@string/menu_action_close_app"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 </menu>

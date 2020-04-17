@@ -3,6 +3,7 @@ package com.github.kotvertolet.youtubeaudioplayer.utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.Pair;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
@@ -45,26 +46,15 @@ public class AudioStreamsUtils {
         return getBestStreamForInternetType(videoData, context);
     }
 
-    public CacheUtil.CachingCounters getCachingCountersForSong(YoutubeSongDto songData) {
-        Uri uri = Uri.parse(songData.getStreamUrl());
-        return getCachingCountersForSong(uri);
-    }
-
-    public CacheUtil.CachingCounters getCachingCountersForSong(Uri uri) {
-        CacheUtil.CachingCounters cachingCounters = new CacheUtil.CachingCounters();
-        CacheUtil.getCached(new DataSpec(uri), App.getInstance().getPlayerCache(), cachingCounters);
-        return cachingCounters;
-    }
-
     public boolean isSongFullyCached(YoutubeSongDto songData) {
-        CacheUtil.CachingCounters cachingCounters = getCachingCountersForSong(songData);
-        App.getInstance().getPlayerCache().isCached(songData.getStreamUrl(), 0, cachingCounters.contentLength);
-        return cachingCounters.alreadyCachedBytes == cachingCounters.contentLength;
+        Pair<Long, Long> pair = CacheUtil.getCached(new DataSpec(Uri.parse(songData.getStreamUrl())),
+                App.getInstance().getPlayerCache(), null);
+        return pair.first.equals(pair.second);
     }
 
     public boolean isSongFullyCached(Uri uri) {
-        CacheUtil.CachingCounters cachingCounters = getCachingCountersForSong(uri);
-        return cachingCounters.alreadyCachedBytes == cachingCounters.contentLength;
+        Pair<Long, Long> pair = CacheUtil.getCached(new DataSpec(uri), App.getInstance().getPlayerCache(), null);
+        return pair.first.equals(pair.second);
     }
 
     private StreamItem getBestStreamForInternetType(YoutubeVideoData youtubeVideoData, Context context) throws UserFriendlyException {
