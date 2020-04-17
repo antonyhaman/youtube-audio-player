@@ -49,7 +49,6 @@ public class App extends MultiDexApplication {
     private File downloadDirectory;
     private Cache downloadCache;
     private DownloadManager downloadManager;
-    //private DownloadTracker downloadTracker;
 
     public static synchronized App getInstance() {
         return instance;
@@ -64,10 +63,8 @@ public class App extends MultiDexApplication {
         return new CacheDataSourceFactory(
                 cache,
                 upstreamFactory,
-                new FileDataSource.Factory(),
-                /* cacheWriteDataSinkFactory= */ null,
-                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
-                /* eventListener= */ null);
+                new FileDataSource.Factory(),null,
+                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null);
     }
 
     public AppDatabase getDatabase() {
@@ -115,16 +112,14 @@ public class App extends MultiDexApplication {
         if (downloadManager == null) {
             DefaultDownloadIndex downloadIndex = new DefaultDownloadIndex(getDatabaseProvider());
             upgradeActionFile(
-                    DOWNLOAD_ACTION_FILE, downloadIndex, /* addNewDownloadsAsCompleted= */ false);
+                    DOWNLOAD_ACTION_FILE, downloadIndex, false);
             upgradeActionFile(
-                    DOWNLOAD_TRACKER_ACTION_FILE, downloadIndex, /* addNewDownloadsAsCompleted= */ true);
+                    DOWNLOAD_TRACKER_ACTION_FILE, downloadIndex, true);
             DownloaderConstructorHelper downloaderConstructorHelper =
                     new DownloaderConstructorHelper(getDownloadCache(), buildHttpDataSourceFactory());
             downloadManager =
                     new DownloadManager(
                             this, downloadIndex, new DefaultDownloaderFactory(downloaderConstructorHelper));
-//            downloadTracker =
-//                    new DownloadTracker(/* context= */ this, buildDataSourceFactory(), downloadManager);
         }
     }
 
@@ -139,11 +134,8 @@ public class App extends MultiDexApplication {
             String fileName, DefaultDownloadIndex downloadIndex, boolean addNewDownloadsAsCompleted) {
         try {
             ActionFileUpgradeUtil.upgradeAndDelete(
-                    new File(getDownloadDirectory(), fileName),
-                    /* downloadIdProvider= */ null,
-                    downloadIndex,
-                    /* deleteOnFailure= */ true,
-                    addNewDownloadsAsCompleted);
+                    new File(getDownloadDirectory(), fileName),null,
+                    downloadIndex, true, addNewDownloadsAsCompleted);
         } catch (IOException e) {
             Log.e(TAG, "Failed to upgrade action file: " + fileName, e);
         }

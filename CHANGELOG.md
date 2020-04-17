@@ -11,3 +11,9 @@ All notable changes to this project will be documented in this file.
 - Moved to [Fastlane](https://gitlab.com/snippets/1895688) file structure
 - Turned on Proguard
 - Various tiny fixes and optimizations
+
+## [1.1.2]
+- Fixed numerous bugs and improved stability
+- Moved to official Retrofit RxJava2 Adapter
+- Bumped Exoplayer version
+- Min SDK level is 21
