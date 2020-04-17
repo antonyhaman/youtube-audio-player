@@ -61,10 +61,6 @@ dependencies {
     // Sliding panel
     implementation 'com.sothree.slidinguppanel:library:3.3.1'
 
-    //TODO: Remove when min sdk >= 21
-    // Ripple for SDK 14+
-    implementation 'com.balysv:material-ripple:1.0.2'
-
     // Joda
     implementation 'joda-time:joda-time:2.10.1'
 
