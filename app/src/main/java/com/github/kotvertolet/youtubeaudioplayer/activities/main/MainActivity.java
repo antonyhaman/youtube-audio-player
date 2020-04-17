@@ -17,12 +17,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.provider.BaseColumns;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -72,7 +72,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.SearchView;
 import androidx.cursoradapter.widget.CursorAdapter;
@@ -97,6 +96,8 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYBACK_PROGRESS_CHANGED;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_ERROR;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_ERROR_THROWABLE;
+import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_PAUSED;
+import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_RESUMED;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PREFERENCE_REPEAT;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PREFERENCE_SHUFFLE;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.RECOMMENDATIONS_RECENT;
@@ -109,7 +110,7 @@ import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.EXPANDE
 public class MainActivity extends AppCompatActivity implements MainActivityContract.View,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final static String TAG = "YT_PLAYER_DEBUG";
+    private final static String TAG = MainActivity.class.getSimpleName();
     private static final AtomicInteger backClicksCount = new AtomicInteger();
     private final FragmentManager fm = getSupportFragmentManager();
     private final Handler mHandler = new Handler();
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     private PlaybackQueueAdapter playbackQueueAdapter;
     private RelativeLayout rlSeeKBarBlock;
     private SlidingUpPanelLayout slidingUpPanelLayout;
-    private AppCompatImageView ivPlayerThumb;
+    private ImageView ivPlayerThumb;
     private AppCompatSeekBar sbPlayerProgress;
     private AppCompatImageButton playerButtonPlayPause;
     private TextView tvPlayerSongTitle;
@@ -139,13 +140,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     private AppCompatImageButton acibShuffleEnabled;
     private TextView tvTrackCurrentTime;
     private TextView tvTrackDuration;
-    private AppCompatImageView ivChevron;
+    private ImageView ivChevron;
     private PlayerStateBroadcastReceiver playerStateBroadcastReceiver;
     private PlaylistNavigationBroadcastReceiver playlistNavigationBroadcastReceiver;
     private LinearLayout llControls;
     private ReceiverManager receiverManager;
     private ComponentName componentName;
     private SlidingPanelListener slidingPanelListener;
+    private AtomicBoolean isLoading = new AtomicBoolean(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (query.length() > 0) {
+                if (query.length() > 0 && !isLoading.get()) {
                     // Clearing pending search query as it will be executed
                     pendingSearchQuery = null;
                     // Do this trick to hide suggestions list
@@ -413,8 +415,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     @Override
     public void showLoadingIndicator(boolean show) {
         if (!show) {
+            isLoading.set(false);
             loadingIndicator.setVisibility(View.GONE);
         } else {
+            isLoading.set(true);
             loadingIndicator.setVisibility(View.VISIBLE);
         }
     }
@@ -584,7 +588,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
         initSlidingPanelListener();
         slidingUpPanelLayout.addPanelSlideListener(slidingPanelListener
         );
@@ -672,37 +675,38 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     }
 
     public class PlayerStateBroadcastReceiver extends BroadcastReceiver {
+
+        private final String TAG = PlayerStateBroadcastReceiver.class.getSimpleName();
+
         @Override
         public void onReceive(Context context, Intent intent) {
             int playerStateCode = intent.getIntExtra(EXTRA_PLAYER_STATE_CODE, -1);
-            Log.i(this.getClass().getSimpleName(), String.format("Intent with action %s received", intent.getAction()));
+            Log.i(TAG, String.format("Intent with action %s received", intent.getAction()));
             switch (playerStateCode) {
                 case Player.STATE_READY:
                     isPlaybackEnded = false;
-
                     showLoadingIndicator(false);
                     int trackDuration = intent.getIntExtra(EXTRA_TRACK_DURATION, 0);
                     boolean isPlaying = intent.getBooleanExtra(EXTRA_PLAYBACK_STATUS, false);
                     setPlayButtonState(isPlaying);
                     sbPlayerProgress.setMax(trackDuration);
                     tvTrackDuration.setText(utils.convertMillsIntoTimeString(trackDuration));
-                    Log.i(this.getClass().getSimpleName(), "Playback state ready, code: " + playerStateCode);
+                    Log.i(TAG, "Playback state ready, code: " + playerStateCode);
                     break;
                 case Player.STATE_ENDED:
                     isPlaybackEnded = true;
-
                     setPlayButtonState(false);
+                    tvTrackCurrentTime.setText("00:00");
                     sbPlayerProgress.setProgress(0);
                     int repeatMode = sharedPreferences.getInt(PREFERENCE_REPEAT, 0);
                     if (repeatMode == REPEAT_MODE_REPEAT_ONE) {
-                        //presenter.playAgain();
                         Bundle bundle = new Bundle();
                         bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.PLAY_AGAIN);
                         utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle, getParent());
                     } else {
                         presenter.playNextPlaylistItem();
                     }
-                    Log.i(this.getClass().getSimpleName(), "Playback ended, code: " + playerStateCode);
+                    Log.i(TAG, "Playback ended, code: " + playerStateCode);
                     break;
                 case Player.STATE_BUFFERING:
                     showLoadingIndicator(true);
@@ -711,20 +715,28 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                     int trackCurrentPosition = intent.getIntExtra(EXTRA_TRACK_PROGRESS, -1);
                     sbPlayerProgress.setProgress(trackCurrentPosition);
                     tvTrackCurrentTime.setText(utils.convertMillsIntoTimeString(trackCurrentPosition));
-                    Log.i(this.getClass().getSimpleName(), "Progress changed: " + utils.convertMillsIntoTimeString(trackCurrentPosition));
+                    Log.i(TAG, "Progress changed: " + utils.convertMillsIntoTimeString(trackCurrentPosition));
                     break;
                 case Player.STATE_IDLE:
-                    Log.i(this.getClass().getSimpleName(), "Player is idling, status code: " + playerStateCode);
+                    Log.i(TAG, "Player is idling, status code: " + playerStateCode);
                     break;
                 case PLAYER_ERROR:
                     setPlayButtonState(false);
                     sbPlayerProgress.setProgress(0);
                     Exception exception = (Exception) Objects.requireNonNull(intent.getExtras()).getSerializable(PLAYER_ERROR_THROWABLE);
                     presenter.handleException(exception);
-                    Log.e(this.getClass().getSimpleName(), "Player error occurred");
+                    Log.e(TAG, "Player error occurred");
+                    break;
+                case PLAYER_PAUSED:
+                    setPlayButtonState(false);
+                    Log.e(TAG, "Player paused");
+                    break;
+                case PLAYER_RESUMED:
+                    setPlayButtonState(true);
+                    Log.e(TAG, "Player resumed");
                     break;
                 default:
-                    Log.e(this.getClass().getSimpleName(), "Wrong player state code: " + playerStateCode);
+                    Log.e(TAG, "Wrong player state code: " + playerStateCode);
                     break;
             }
         }

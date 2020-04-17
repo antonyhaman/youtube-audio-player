@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.AudioStreamsUtils;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.cache.CacheUtil;
@@ -21,17 +22,16 @@ public class CacheTask implements Runnable {
     private Uri uri;
     private SimpleCache cache;
     private DataSource dataSource;
-    private CacheUtil.CachingCounters cachingCounters;
-
+    private AudioStreamsUtils audioStreamsUtils;
 
     public CacheTask(YoutubeSongDto songDto, Uri uri, SimpleCache cache, DataSource dataSource) {
         running = new AtomicBoolean(false);
         stopCaching = new AtomicBoolean(false);
-        cachingCounters = new CacheUtil.CachingCounters();
         this.songDto = songDto;
         this.uri = uri;
         this.cache = cache;
         this.dataSource = dataSource;
+        this.audioStreamsUtils = new AudioStreamsUtils();
     }
 
     @Override
@@ -40,8 +40,9 @@ public class CacheTask implements Runnable {
         while (running.get()) {
             try {
                 DataSpec dataSpec = new DataSpec(uri);
-                CacheUtil.getCached(dataSpec, cache, cachingCounters);
-                CacheUtil.cache(dataSpec, cache, dataSource, cachingCounters, stopCaching);
+                CacheUtil.getCached(dataSpec, cache, null);
+                //TODO: Add progress listener here
+                CacheUtil.cache(dataSpec, cache, null, dataSource, null, stopCaching);
             } catch (IOException e) {
                 e.printStackTrace();
                 running.set(false);
@@ -74,6 +75,6 @@ public class CacheTask implements Runnable {
     }
 
     public boolean isCached() {
-        return cache.isCached(uri.toString(), 0, cachingCounters.contentLength);
+        return audioStreamsUtils.isSongFullyCached(uri);
     }
 }

@@ -25,22 +25,20 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PlaylistPickerDialogFragment extends DialogFragment {
 
     private WeakReference<Context> context;
-    private PlaylistSelectorAdapter playlistAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getDialog().setTitle("Playlists");
         getDialog().setCancelable(true);
-        View v = inflater.inflate(R.layout.layout_playlist_picker, container);
-        return v;
+        return inflater.inflate(R.layout.layout_playlist_picker, container);
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         MainActivityContract.Presenter presenter = ((MainActivity) context.get()).getPresenter();
-        playlistAdapter = new PlaylistSelectorAdapter(presenter, getDialog());
+        PlaylistSelectorAdapter playlistAdapter = new PlaylistSelectorAdapter(presenter, getDialog());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context.get());
         RecyclerView rvPlaylists = view.findViewById(R.id.rl_playlists);
         rvPlaylists.setLayoutManager(linearLayoutManager);

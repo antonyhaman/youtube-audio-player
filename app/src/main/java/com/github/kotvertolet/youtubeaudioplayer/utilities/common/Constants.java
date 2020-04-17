@@ -6,12 +6,12 @@ public class Constants {
     //public final static String YOUTUBE_API_KEY = "AIzaSyBnNjcvvkAKbifj3Yw2nmrzMJUALoNHxXM";
 
     public static final String APP_NAME = "Youtube audio player";
-    public static final String ENCODING_UTF_8 = "UTF-8";
-    public static final String NOTIFICATION_SERVICE_ID = "yt_audio_notification_channel";
-    public static final int FOREGROUND_SERVICE_ID = 505;
-    public static final String STREAM_URI = "STREAM_URI";
     public static final int PLAYBACK_PROGRESS_CHANGED = 5;
     public static final int PLAYER_ERROR = 6;
+    public static final int PLAYER_PAUSED = 7;
+    public static final int PLAYER_RESUMED = 8;
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" +
+            " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36";
 
     public static final String PLAYER_ERROR_MESSAGE = "PLAYER_ERROR_MESSAGE";
     public static final String PLAYER_ERROR_THROWABLE = "PLAYER_ERROR_THROWABLE2";

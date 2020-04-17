@@ -8,8 +8,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.Manifest.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".App"
@@ -21,6 +22,8 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         android:versionName="ver"
+
+
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".activities.splash.SplashActivity"
@@ -39,7 +42,8 @@
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="fullSensor"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
+
         <service
             android:name=".services.ExoPlayerService"
             android:enabled="true"
@@ -47,6 +51,9 @@
         <service
             android:name=".services.PlayerNotificationService"
             android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".services.ExoDownloadService"
             android:exported="false" />
     </application>
 

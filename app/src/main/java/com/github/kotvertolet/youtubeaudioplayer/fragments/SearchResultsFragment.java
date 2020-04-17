@@ -2,9 +2,7 @@ package com.github.kotvertolet.youtubeaudioplayer.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,7 +12,6 @@ import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityCon
 import com.github.kotvertolet.youtubeaudioplayer.adapters.SearchResultsAdapter;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.SearchResultsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult;
-import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 
 import java.lang.ref.WeakReference;
 
@@ -84,25 +81,6 @@ public class SearchResultsFragment extends Fragment {
                 appendData = false;
             } else adapter.replaceData(youtubeSongDtos.getSongs());
         });
-    }
-
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.song_item_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        if (item.getTitle().equals(getString(R.string.menu_action_add_to_playlist))) {
-            YoutubeSongDto youtubeSongDto = getSearchResult().getSongs().get(adapter.getAdapterPosition());
-            presenter.get().addToPlaylist(youtubeSongDto);
-        }
-        //TODO: Implement downloading
-//        else if(item.getTitle().equals(getString(R.string.menu_action_download))) {
-//           getSearchResult().getSongs().get(adapter.getAdapterPosition()).getStreamUrl();
-//        }
-        return super.onContextItemSelected(item);
     }
 
     @Override

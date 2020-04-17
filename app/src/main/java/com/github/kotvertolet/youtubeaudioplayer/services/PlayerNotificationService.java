@@ -21,6 +21,7 @@ import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.ReceiverManager;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
 import com.google.android.exoplayer2.Player;
 
 import java.text.SimpleDateFormat;
@@ -41,9 +42,9 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 
 public class PlayerNotificationService extends Service {
 
-    private final String channelId = String.valueOf(createID());
     private final String channelName = PlayerNotificationService.class.getSimpleName();
-
+    private CommonUtils commonUtils = new CommonUtils();
+    private final String channelId = commonUtils.createChannelId();
     private boolean isPlaying = true;
     private ReceiverManager receiverManager;
     private NotificationCompat.Builder builder;
@@ -51,7 +52,6 @@ public class PlayerNotificationService extends Service {
     private RemoteViews smallNotificationLayout;
     private RemoteViews bigNotificationLayout;
     private int notificationId;
-
     private PlayerStateBroadcastReceiver playerStateBroadcastReceiver;
     private PlayerChangeStateReceiver playerChangeStateReceiver;
 
@@ -98,9 +98,9 @@ public class PlayerNotificationService extends Service {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
-                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-                nm.createNotificationChannel(notificationChannel);
+                NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+                channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                nm.createNotificationChannel(channel);
                 builder.setCategory(Notification.CATEGORY_SERVICE);
             }
 

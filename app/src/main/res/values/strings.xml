@@ -67,7 +67,7 @@
     <string name="pref_title_save_in_cache_only_wifi">Allow songs caching only via WiFi</string>
     <string name="pref_description_save_in_cache_only_wifi">Will consume more mobile traffic if turned off</string>
     <string name="key_pref_save_in_cache_only_wifi">pref_mobile_network_caching</string>
-    
+
     <string name="pref_title_audio_quality">Audio quality</string>
     <string name="pref_description_audio_quality">Better quality consumes more traffic.
         Automatic is recommended (it will select quality based on your connection type)</string>

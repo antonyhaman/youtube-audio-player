@@ -7,4 +7,8 @@
         android:id="@+id/add_to_playlist"
         android:title="@string/menu_action_add_to_playlist"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/download"
+        android:title="@string/menu_action_download"
+        app:showAsAction="never" />
 </menu>
