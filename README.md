@@ -23,7 +23,7 @@ Alternatively, you can pick the latest [release](https://github.com/kotvertolet/
 ' amoung it's assets, download it and install it on your phone (you may need to allow unknown apps installation in your phone settings).
 
 ## Requirements
-Minimum android version: 4.4 Kitkat (SDK level 19)
+Minimum android version: 5.0 Lollipop (SDK level 21)
 
 ## Contributing
 Pull requests are welcome, if you have any questions feel free to contact me via email
