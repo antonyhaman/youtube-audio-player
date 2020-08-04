@@ -100,7 +100,7 @@
                 android:paddingStart="10dp"
                 android:paddingLeft="10dp"
                 android:paddingTop="2dp"
-                android:src="@drawable/ic_thumb_up_black_24dp" />
+                app:srcCompat="@drawable/ic_thumb_up_black_24dp" />
 
             <TextView
                 android:id="@+id/tv_likes_count"
@@ -118,7 +118,7 @@
                 android:paddingStart="10dp"
                 android:paddingLeft="10dp"
                 android:paddingTop="2dp"
-                android:src="@drawable/ic_thumb_down_black_24dp" />
+                app:srcCompat="@drawable/ic_thumb_down_black_24dp" />
 
             <TextView
                 android:id="@+id/tv_dislikes_count"

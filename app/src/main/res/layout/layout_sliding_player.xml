@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iv_player_thumb"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -72,14 +72,14 @@
             android:layout_toLeftOf="@id/iv_chevron"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatImageButton
+            <ImageButton
                 android:id="@+id/ib_player_back"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/click_effect_selector"
                 app:srcCompat="@drawable/ic_player_back_black_40dp" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
+            <ImageButton
                 android:id="@+id/ib_player_play_pause"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -88,7 +88,7 @@
                 android:background="@drawable/click_effect_selector"
                 app:srcCompat="@drawable/ic_player_play_black_40dp" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
+            <ImageButton
                 android:id="@+id/ib_player_next"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -96,7 +96,7 @@
                 app:srcCompat="@drawable/ic_player_next_black_40dp" />
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iv_chevron"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginLeft="15dp">
 
-                <androidx.appcompat.widget.AppCompatImageButton
+                <ImageButton
                     android:id="@+id/acib_shuffle_disabled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
                     android:visibility="gone"
                     app:srcCompat="@drawable/ic_shuffle_disabled" />
 
-                <androidx.appcompat.widget.AppCompatImageButton
+                <ImageButton
                     android:id="@+id/acib_shuffle_enabled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -153,11 +153,6 @@
                 android:gravity="center_horizontal"
                 android:text="Nirvana - In Bloom" />
 
-            <!--android:layout_toRightOf="@id/fl_shuffle_buttons_block"-->
-            <!--android:layout_toEndOf="@id/fl_shuffle_buttons_block"-->
-            <!--android:layout_toLeftOf="@id/fl_repeat_buttons_block"-->
-            <!--android:layout_toStartOf="@id/fl_repeat_buttons_block"-->
-
             <TextView
                 android:id="@+id/tv_secondary_channel_title"
                 android:layout_width="wrap_content"
@@ -178,7 +173,7 @@
                 android:layout_marginEnd="15dp"
                 android:layout_marginRight="15dp">
 
-                <androidx.appcompat.widget.AppCompatImageButton
+                <ImageButton
                     android:id="@+id/acib_repeat_disabled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -186,7 +181,7 @@
                     android:visibility="gone"
                     app:srcCompat="@drawable/ic_repeat_disabled" />
 
-                <androidx.appcompat.widget.AppCompatImageButton
+                <ImageButton
                     android:id="@+id/acib_repeat_all_enabled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -194,7 +189,7 @@
                     android:visibility="gone"
                     app:srcCompat="@drawable/ic_repeat_all_activated" />
 
-                <androidx.appcompat.widget.AppCompatImageButton
+                <ImageButton
                     android:id="@+id/acib_repeat_one_enabled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -214,7 +209,7 @@
                 android:text="00:00"
                 android:textSize="12sp" />
 
-            <androidx.appcompat.widget.AppCompatSeekBar
+            <SeekBar
                 android:id="@+id/sb_player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

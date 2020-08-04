@@ -41,16 +41,17 @@ public class SplashActivity extends AppCompatActivity implements SplashActivityC
         utils = new CommonUtils();
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         presenter = new SplashActivityPresenterImpl(this);
-    }
 
-    @Override
-    protected void onPostResume() {
         boolean noRecommendations = sharedPreferences.getBoolean(Constants.PREFERENCE_NO_RECOMMENDATIONS, false);
         if (noRecommendations) {
             presenter.loadRecents(new HashMap<>());
         } else {
             presenter.loadYoutubeRecommendations();
         }
+    }
+
+    @Override
+    protected void onPostResume() {
         super.onPostResume();
     }
 

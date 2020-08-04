@@ -23,6 +23,8 @@
     <string name="no_connection_error_message_title">Network error</string>
     <string name="network_error_message">An error occurred, please check your internet connection or try again later</string>
     <string name="generic_error_message">Unknown error occurred, try again later</string>
+    <string name="audio_extraction_failed_error_message">Audio extraction failed, please try again or select another track</string>
+    <string name="youtube_request_failed_error_message">Youtube request failed, please check your internet connection and try again</string>
     <string name="menu_action_search">Search…</string>
     <string name="menu_action_clear_db">Clear database</string>
     <string name="menu_action_playlists">Playlists</string>
@@ -64,20 +66,20 @@
         <item>1000</item>
     </string-array>
 
-    <string name="pref_title_save_in_cache_only_wifi">Allow songs caching only via WiFi</string>
-    <string name="pref_description_save_in_cache_only_wifi">Will consume more mobile traffic if turned off</string>
+    <string name="pref_title_save_in_cache_only_wifi">Restrict caching via mobile internet</string>
+    <string name="pref_description_save_in_cache_only_wifi">Consume more mobile traffic if turned off</string>
     <string name="key_pref_save_in_cache_only_wifi">pref_mobile_network_caching</string>
 
     <string name="pref_title_audio_quality">Audio quality</string>
-    <string name="pref_description_audio_quality">Better quality consumes more traffic.
-        Automatic is recommended (it will select quality based on your connection type)</string>
+    <string name="pref_description_audio_quality">Better quality consumes more traffic
+        Automatic is recommended (it will select audio quality based on your connection type)</string>
     <string name="pref_default_audio_quality">0</string>
     <string name="key_pref_audio_quality">pref_audio_quality</string>
     <string-array name="pref_list_titles_audio_quality">
         <item>Automatic</item>
         <item>Best</item>
         <item>Medium</item>
-        <item>Lowest</item>
+        <item>Low</item>
     </string-array>
     <string-array name="pref_list_values_audio_quality">
         <item>0</item>

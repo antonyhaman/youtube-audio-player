@@ -33,10 +33,10 @@ public class AudioStreamsUtils {
         }
         // TODO: Do this in a good way
         catch (ExtractionException e) {
-            throw new UserFriendlyException(R.string.generic_error_message,
+            throw new UserFriendlyException(R.string.audio_extraction_failed_error_message,
                     e.getMessage());
         } catch (YoutubeRequestException e) {
-            throw new UserFriendlyException(R.string.generic_error_message,
+            throw new UserFriendlyException(R.string.youtube_request_failed_error_message,
                     e.getMessage());
         }
         return youtubeVideoData;

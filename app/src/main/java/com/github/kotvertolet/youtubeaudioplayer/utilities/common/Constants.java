@@ -2,9 +2,6 @@ package com.github.kotvertolet.youtubeaudioplayer.utilities.common;
 
 public class Constants {
 
-    //TODO: Put Youtube Data API v3 key here
-    //public final static String YOUTUBE_API_KEY = "AIzaSyBnNjcvvkAKbifj3Yw2nmrzMJUALoNHxXM";
-
     public static final String APP_NAME = "Youtube audio player";
     public static final int PLAYBACK_PROGRESS_CHANGED = 5;
     public static final int PLAYER_ERROR = 6;
