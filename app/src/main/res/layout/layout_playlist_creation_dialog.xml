@@ -15,21 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Playlist name" />
-        <!--<EditText-->
-        <!--android:id="@+id/et_playlist_name"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:inputType="text"-->
-        <!--android:hint="Playlist name"/>-->
-
     </com.google.android.material.textfield.TextInputLayout>
-
-    <!--<EditText-->
-    <!--android:id="@+id/et_playlist_name"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:inputType="text"-->
-    <!--android:hint="Playlist name"/>-->
 
     <Button
         android:id="@+id/bt_playlist_creation_ok"

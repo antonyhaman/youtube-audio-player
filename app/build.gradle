@@ -8,8 +8,8 @@ android {
         applicationId "com.github.kotvertolet.youtubeaudioplayer"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 3
-        versionName "1.1.2"
+        versionCode 4
+        versionName "1.1.3"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
@@ -39,12 +39,12 @@ dependencies {
 
     // Core
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
 
     // Support
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'com.google.android.material:material:1.3.0-alpha02'
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:2.7.2"
@@ -86,6 +86,9 @@ dependencies {
     // Multidex
     implementation 'com.android.support:multidex:1.0.3'
 
+    // Ripple for API <21
+    //implementation 'com.balysv:material-ripple:1.0.2'
+
     // YoutubeJExtractor
-    implementation 'com.github.kotvertolet:youtube-jextractor:0.2.5'
+    implementation 'com.github.kotvertolet:youtube-jextractor:0.3.1'
 }

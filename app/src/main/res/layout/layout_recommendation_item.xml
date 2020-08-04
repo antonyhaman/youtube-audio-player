@@ -144,18 +144,6 @@
                 android:text="3950"
                 android:textSize="10sp" />
         </RelativeLayout>
-        <!--<TextView-->
-        <!--android:id="@+id/explore_item_download_btn"-->
-        <!--android:layout_width="36dp"-->
-        <!--android:layout_height="36dp"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_below="@+id/iv_popup_button"-->
-        <!--android:background="@drawable/round_btn_background_drop_shadow"-->
-        <!--android:gravity="center"-->
-        <!--android:textColor="@color/TitleColorBlack"-->
-        <!--android:textSize="18sp"-->
-        <!--android:text=""/>-->
 
         <ImageView
             android:id="@+id/iv_popup_button"
@@ -166,18 +154,5 @@
             android:gravity="center"
             android:textColor="@color/TitleColorBlack"
             app:srcCompat="@drawable/ic_more_vert_black_24dp" />
-
-        <!--<TextView-->
-        <!--android:id="@+id/iv_popup_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentTop="true"-->
-
-        <!--android:paddingLeft="4dp"-->
-        <!--android:paddingRight="4dp"-->
-
-        <!--android:text="@string/vertical_ellipsis"-->
-        <!--android:textAppearance="?android:textAppearanceLarge" />-->
     </RelativeLayout>
 </RelativeLayout>

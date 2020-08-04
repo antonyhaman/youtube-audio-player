@@ -93,6 +93,11 @@ public class App extends MultiDexApplication {
         cachingTasksManager = new CachingTasksManager();
     }
 
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+    }
+
     public DownloadNotificationHelper getDownloadNotificationHelper() {
         if (downloadNotificationHelper == null) {
             downloadNotificationHelper =
