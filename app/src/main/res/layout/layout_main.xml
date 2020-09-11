@@ -3,23 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/lightGray"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@color/lightGray"
+    android:orientation="vertical"
     tools:context="com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity">
 
     <FrameLayout
         android:id="@+id/fragment_placeholder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="42dp"
         android:layout_height="42dp"
-        style="?android:attr/progressBarStyleLarge"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

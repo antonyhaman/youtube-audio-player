@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class ReceiverManager {
 

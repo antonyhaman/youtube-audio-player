@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -13,31 +12,19 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import com.github.kotvertolet.youtubeaudioplayer.App;
-import com.github.kotvertolet.youtubeaudioplayer.custom.CachingTasksManager;
-import com.github.kotvertolet.youtubeaudioplayer.data.NetworkType;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
-import com.github.kotvertolet.youtubeaudioplayer.utilities.AudioStreamsUtils;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.ExoPlayerUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.ReceiverManager;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
-import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+
+import androidx.annotation.Nullable;
 
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.ACTION_PLAYER_CHANGE_STATE;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.ACTION_PLAYER_STATE_CHANGED;
@@ -50,37 +37,36 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYBACK_PROGRESS_CHANGED;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_ERROR;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_ERROR_THROWABLE;
+import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_PAUSED;
+import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_RESUMED;
 
 public class ExoPlayerService extends Service {
 
-    private final String USER_AGENT = "^_^";
     private final String TAG = getClass().getSimpleName();
     private PlayerCommandsBroadcastReceiver playerCommandsBroadcastReceiver;
     private SimpleExoPlayer exoPlayer;
     private WifiManager.WifiLock wifiLock;
     private Handler progressHandler;
-    private Handler idlingHandler;
     private CommonUtils utils;
     private MediaSource mediaSource;
     private PlayerStateListener playerStateListener;
     private HeadsetStateBroadcastReceiver headsetStateReceiver;
     private ReceiverManager receiverManager;
-    private SimpleCache simpleCache;
-    private AudioStreamsUtils audioStreamsUtils;
-    private CachingTasksManager cacheTaskManager;
-    private SharedPreferences sharedPreferences;
+    private ExoPlayerUtils exoPlayerUtils;
+
+
+    private long playbackPosition = 0;
+    private int currentWindow = 0;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        utils = new CommonUtils(getApplicationContext());
+        utils = new CommonUtils();
         receiverManager = ReceiverManager.getInstance(this);
-        App app = App.getInstance();
-        simpleCache = app.getPlayerCache();
-        audioStreamsUtils = new AudioStreamsUtils();
-        cacheTaskManager = app.getCachingTasksManager();
+        exoPlayerUtils = new ExoPlayerUtils();
+
         createPlayer();
-        sharedPreferences = app.getSharedPreferences();
         createWifiLock();
         registerReceivers();
         Log.i(this.getClass().getSimpleName(), "Exoplayer service has been created");
@@ -100,7 +86,7 @@ public class ExoPlayerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        cacheTaskManager.stopAllTasks();
+        exoPlayerUtils.stopCacheTasks();
         clearPlayerState();
         unregisterReceivers();
         stopService(new Intent(this, PlayerNotificationService.class));
@@ -117,56 +103,24 @@ public class ExoPlayerService extends Service {
     private void startPlaybackProgressUpdateRunnable() {
         if (progressHandler == null && exoPlayer.getPlayWhenReady()) {
             progressHandler = new Handler();
+            //Updating Seekbar on UI thread
+            progressHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    final int stateCode = exoPlayer.getPlaybackState();
+                    if (stateCode == Player.STATE_READY || stateCode == Player.STATE_BUFFERING) {
+                        Bundle bundle = new Bundle();
+                        int trackCurrentPosition = (int) exoPlayer.getCurrentPosition() / 1000;
+                        bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYBACK_PROGRESS_CHANGED);
+                        bundle.putInt(EXTRA_TRACK_PROGRESS, trackCurrentPosition);
+                        utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle, getApplicationContext());
+                        progressHandler.postDelayed(this, 1000);
+                    } else {
+                        throw new IllegalStateException("ExoPlayer was dead while progress handler was still going. Player state code was: " + stateCode);
+                    }
+                }
+            });
         }
-        //Updating Seekbar on UI thread
-        progressHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                final int stateCode = exoPlayer.getPlaybackState();
-                if (exoPlayer != null && stateCode == Player.STATE_READY || stateCode == Player.STATE_BUFFERING) {
-                    Bundle bundle = new Bundle();
-                    int trackCurrentPosition = (int) exoPlayer.getCurrentPosition() / 1000;
-                    bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYBACK_PROGRESS_CHANGED);
-                    bundle.putInt(EXTRA_TRACK_PROGRESS, trackCurrentPosition);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle);
-                    progressHandler.postDelayed(this, 1000);
-                } else if (stateCode == Player.STATE_ENDED) {
-                    Bundle bundle = new Bundle();
-                    int trackCurrentPosition = (int) exoPlayer.getCurrentPosition() / 1000;
-                    bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYBACK_PROGRESS_CHANGED);
-                    bundle.putInt(EXTRA_TRACK_PROGRESS, trackCurrentPosition);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle);
-                    progressHandler.postDelayed(this, 1000);
-                } else if (stateCode == Player.STATE_IDLE) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(EXTRA_PLAYER_STATE_CODE, Player.STATE_IDLE);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle);
-                } else {
-                    throw new IllegalStateException("ExoPlayer was dead while progress handler was still going. Player state code was: " + stateCode);
-                }
-            }
-        });
-    }
-
-    private void startIdlingRunnable() {
-        if (idlingHandler != null) {
-            clearPlayerState();
-        } else idlingHandler = new Handler();
-
-        idlingHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                final int stateCode = exoPlayer.getPlaybackState();
-                if (exoPlayer != null && stateCode == Player.STATE_ENDED) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(EXTRA_PLAYER_STATE_CODE, Player.STATE_IDLE);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle);
-                    idlingHandler.postDelayed(this, 1000);
-                } else {
-                    throw new IllegalStateException("ExoPlayer was dead while progress handles was still going.");
-                }
-            }
-        });
     }
 
     private void startPlayback(Uri uri) {
@@ -175,19 +129,16 @@ public class ExoPlayerService extends Service {
             clearPlayerState();
             createPlayer();
         }
-        mediaSource = prepareCachedMediaSource(uri);
+        mediaSource = exoPlayerUtils.prepareCachedMediaSource(uri);
         exoPlayer.prepare(mediaSource);
         exoPlayer.setPlayWhenReady(true);
         Log.i(TAG, "Playback started, uri: " + uri.toString());
     }
 
     private void startPlayback(YoutubeSongDto songDto) {
-        final int stateCode = exoPlayer.getPlaybackState();
-        if (stateCode != Player.STATE_IDLE) {
-            clearPlayerState();
-            createPlayer();
-        }
-        mediaSource = prepareMediaSource(songDto);
+        clearPlayerState();
+        createPlayer();
+        mediaSource = exoPlayerUtils.prepareMediaSource(songDto);
         exoPlayer.prepare(mediaSource);
         exoPlayer.setPlayWhenReady(true);
         Log.i(TAG, "Playback started, uri: " + songDto.getStreamUrl());
@@ -205,44 +156,53 @@ public class ExoPlayerService extends Service {
     }
 
     private void changePlaybackState() {
-        exoPlayer.setPlayWhenReady(!exoPlayer.getPlayWhenReady());
-        String playbackState = exoPlayer.getPlayWhenReady() ? "playing" : "not playing";
-        Log.i(TAG, "Playback status changed to: " + playbackState);
-    }
-
-    private MediaSource prepareMediaSource(YoutubeSongDto songDto) {
-        Uri uri = Uri.parse(songDto.getStreamUrl());
-        if (audioStreamsUtils.isSongFullyCached(songDto)) {
-            return prepareCachedMediaSource(uri);
+        Bundle bundle = new Bundle();
+        if (exoPlayer != null && exoPlayer.getPlayWhenReady()) {
+            releasePlayer();
+            bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYER_PAUSED);
+            Log.i(TAG, "Playback status changed to 'paused'");
         } else {
-            return prepareSimpleMediaSource(uri, songDto);
+            changePlaybackState(this.playbackPosition);
+            bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYER_RESUMED);
+            Log.i(TAG, "Playback status changed to 'resumed'");
         }
+        utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle, getApplicationContext());
     }
 
-    private MediaSource prepareCachedMediaSource(Uri uri) {
-        CacheDataSourceFactory cacheDataSourceFactory = new CacheDataSourceFactory(simpleCache,
-                new DefaultHttpDataSourceFactory(USER_AGENT));
-        return new ExtractorMediaSource.Factory(cacheDataSourceFactory).createMediaSource(uri);
+    private void changePlaybackState(long playbackPosition) {
+        if (exoPlayer == null) {
+            createPlayer();
+            exoPlayer.prepare(mediaSource, false, false);
+        }
+        exoPlayer.seekTo(currentWindow, playbackPosition);
+        exoPlayer.setPlayWhenReady(true);
     }
 
-    private MediaSource prepareSimpleMediaSource(Uri uri, YoutubeSongDto songDto) {
-        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(USER_AGENT);
-        if (songDto.getDurationInSeconds() < 1800 && !cacheTaskManager.hasTask(songDto.getVideoId())) {
-            if (sharedPreferences.getBoolean(Constants.PREFERENCE_RESTRICT_MOBILE_NETWORK_CACHING, true)) {
-                if (utils.getNetworkClass().equals(NetworkType.TYPE_WIFI)) {
-                    cacheTaskManager.addTaskAndStart(songDto, uri, simpleCache, dataSourceFactory.createDataSource());
-                }
-            } else
-                cacheTaskManager.addTaskAndStart(songDto, uri, simpleCache, dataSourceFactory.createDataSource());
+    private void releasePlayer() {
+        if (exoPlayer != null) {
+            playbackPosition = exoPlayer.getCurrentPosition();
+            currentWindow = exoPlayer.getCurrentWindowIndex();
+            exoPlayer.removeListener(playerStateListener);
+            playerStateListener = null;
+            exoPlayerUtils.stopHandlers(progressHandler);
+            progressHandler = null;
+            exoPlayer.release();
+            exoPlayer = null;
+            Log.i(TAG, "Exoplayer state has been released");
+        } else Log.i(TAG, "Exoplayer is already released");
+    }
+
+    private void clearPlayerState() {
+        if (exoPlayer != null) {
+            exoPlayer.setPlayWhenReady(false);
+            exoPlayer.seekTo(0);
         }
-        return new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+        Log.i(this.TAG, "Exoplayer state has been cleared");
     }
 
     private void createPlayer() {
         playerStateListener = new PlayerStateListener();
-        TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory();
-        TrackSelector trackSelector = new DefaultTrackSelector(trackSelectionFactory);
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
+        exoPlayer = new SimpleExoPlayer.Builder(App.getInstance()).build();
         exoPlayer.addListener(playerStateListener);
         setAudioFocus();
         Log.i(this.getClass().getSimpleName(), "Exoplayer has been created");
@@ -254,18 +214,6 @@ public class ExoPlayerService extends Service {
                 .setContentType(C.CONTENT_TYPE_MOVIE)
                 .build();
         exoPlayer.setAudioAttributes(audioAttributes, true);
-    }
-
-    private void clearPlayerState() {
-        if (exoPlayer != null) {
-            exoPlayer.setPlayWhenReady(false);
-            exoPlayer.seekTo(0);
-            exoPlayer.removeListener(playerStateListener);
-            exoPlayer.release();
-        }
-        stopHandler(progressHandler);
-        stopHandler(idlingHandler);
-        Log.i(this.getClass().getSimpleName(), "Exoplayer state has been cleared");
     }
 
     private void createWifiLock() {
@@ -292,18 +240,12 @@ public class ExoPlayerService extends Service {
     }
 
     private void startNotificationService(YoutubeSongDto song) {
-        if (!utils.isServiceRunning(PlayerNotificationService.class)) {
+        if (!utils.isServiceRunning(PlayerNotificationService.class, getApplicationContext())) {
             Intent intent = new Intent(this, PlayerNotificationService.class);
             Bundle bundle = new Bundle();
             bundle.putParcelable(EXTRA_SONG, song);
             intent.putExtra(EXTRA_SONG, bundle);
             startService(intent);
-        }
-    }
-
-    private void stopHandler(Handler idlingHandler) {
-        if (idlingHandler != null) {
-            idlingHandler.removeCallbacksAndMessages(null);
         }
     }
 
@@ -327,45 +269,39 @@ public class ExoPlayerService extends Service {
                     Log.e(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
                     break;
             }
-            utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle);
+            utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle, getApplicationContext());
         }
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             Bundle bundle = new Bundle();
+            // Sending message to MainActivity with player status
             bundle.putInt(EXTRA_PLAYER_STATE_CODE, playbackState);
             switch (playbackState) {
                 case Player.STATE_ENDED:
                     //Stop playback and return to the start position
                     clearPlayerState();
-                    //Todo: Think how to avoid sending this and stick to handler
-                    Bundle playbackEndedBundle = new Bundle();
-                    playbackEndedBundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYBACK_PROGRESS_CHANGED);
-                    playbackEndedBundle.putInt(EXTRA_TRACK_PROGRESS, 0);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, playbackEndedBundle);
-                    startIdlingRunnable();
+                    releasePlayer();
+                    bundle.putBoolean(EXTRA_PLAYBACK_STATUS, false);
                     Log.i(TAG, "Playback ended!");
                     break;
                 case Player.STATE_READY:
-                    stopHandler(idlingHandler);
-                    Log.i(TAG, "Playback is ready!");
                     bundle.putInt(EXTRA_TRACK_DURATION, (int) (exoPlayer.getDuration() / 1000));
                     bundle.putBoolean(EXTRA_PLAYBACK_STATUS, exoPlayer.getPlayWhenReady());
                     startPlaybackProgressUpdateRunnable();
+                    Log.i(TAG, "Playback is ready!");
                     break;
                 case Player.STATE_BUFFERING:
-                    stopHandler(idlingHandler);
                     Log.i(TAG, "Playback buffering!");
                     break;
                 case Player.STATE_IDLE:
-                    //startIdlingRunnable();
                     Log.i(TAG, "ExoPlayer idle!");
                     break;
                 default:
                     Log.i(TAG, "Playback state is invalid: " + playbackState);
                     break;
             }
-            utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle);
+            utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle, getApplicationContext());
         }
     }
 
@@ -391,27 +327,20 @@ public class ExoPlayerService extends Service {
                 case PlayerAction.PAUSE_PLAY:
                     changePlaybackState();
                     break;
-                case PlayerAction.NEXT:
-                    Bundle nextBundle = new Bundle();
-                    nextBundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.NEXT);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYLIST_NAVIGATION, nextBundle);
-                    break;
-                case PlayerAction.BACK:
-                    Bundle backBundle = new Bundle();
-                    backBundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.BACK);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYLIST_NAVIGATION, backBundle);
-                    break;
                 case PlayerAction.CHANGE_PLAYBACK_PROGRESS:
                     int progress = intent.getIntExtra(EXTRA_TRACK_PROGRESS, 0);
-                    exoPlayer.seekTo(progress * 1000);
+                    changePlaybackState(progress * 1000);
+                    Log.i(TAG, "Playback position changed");
                     break;
                 case PlayerAction.PLAY_AGAIN:
                     //clearPlayerState(true);
-                    if (exoPlayer.getPlayWhenReady() && exoPlayer.getContentPosition() > 0) {
-                        exoPlayer.seekTo(0);
-                    } else {
-                        startPlayback(mediaSource);
-                    }
+                    changePlaybackState(0);
+                    break;
+                case PlayerAction.NEXT:
+                case PlayerAction.BACK:
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(EXTRA_PLAYER_STATE_CODE, action);
+                    utils.sendLocalBroadcastMessage(ACTION_PLAYLIST_NAVIGATION, bundle, getApplicationContext());
                     break;
                 default:
                     Log.e(TAG, "Unknown intent received: \n" + intent.toString());

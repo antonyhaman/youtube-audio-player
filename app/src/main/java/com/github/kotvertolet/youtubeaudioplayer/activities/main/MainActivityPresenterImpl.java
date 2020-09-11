@@ -3,12 +3,11 @@ package com.github.kotvertolet.youtubeaudioplayer.activities.main;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.lifecycle.MutableLiveData;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
@@ -20,6 +19,7 @@ import com.github.kotvertolet.youtubeaudioplayer.data.liveData.PlaylistsWithSong
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.RecommendationsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.SearchSuggestionsResponse;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
+import com.github.kotvertolet.youtubeaudioplayer.services.ExoDownloadService;
 import com.github.kotvertolet.youtubeaudioplayer.services.PlayerAction;
 import com.github.kotvertolet.youtubeaudioplayer.tasks.AudioStreamExtractionAsyncTask;
 import com.github.kotvertolet.youtubeaudioplayer.tasks.VideoSearchAsyncTask;
@@ -27,15 +27,19 @@ import com.github.kotvertolet.youtubeaudioplayer.utilities.AudioStreamsUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.PlaylistWrapper;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
+import com.google.android.exoplayer2.offline.DownloadRequest;
+import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.upstream.cache.CacheUtil;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.ACTION_PLAYER_CHANGE_STATE;
@@ -61,7 +65,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         viewContract.setPresenter(this);
         view = new WeakReference<>(viewContract);
         dataSource = RemoteDataSource.getInstance();
-        utils = new CommonUtils(context);
+        utils = new CommonUtils();
         audioStreamsUtils = new AudioStreamsUtils();
         SharedPreferences sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         playlistWrapper = new PlaylistWrapper(sharedPreferences);
@@ -78,7 +82,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         }
         DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
         utils.createAlertDialog(R.string.error, exception.getUserErrorMessage(),
-                true, R.string.button_ok, listener, 0, null).show();
+                true, R.string.button_ok, listener, 0, null, context.get()).show();
     }
 
     @Override
@@ -88,7 +92,7 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         view.get().showLoadingIndicator(false);
         DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
         utils.createAlertDialog(R.string.error, R.string.generic_error_message,
-                true, R.string.button_ok, listener, 0, null).show();
+                true, R.string.button_ok, listener, 0, null, context.get()).show();
     }
 
     @Override
@@ -98,6 +102,8 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
 
     @Override
     public void prepareAudioStreamAndPlay(YoutubeSongDto songData) {
+        AudioStreamExtractionAsyncTask.Callback callback = (result) -> playPreparedStream(result.getResult());
+
         String url = songData.getStreamUrl();
         // Check if song is cached
         Set<String> cacheKeys = simpleCache.getKeys();
@@ -110,9 +116,9 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
             // Song may be still caching but if not we deleting the unfinished cache
             else if (!cachingTasksManager.hasTask(songData.getVideoId())) {
                 CacheUtil.remove(simpleCache, url);
-                checkInternetAndStartExtractionTask(songData);
+                checkInternetAndStartExtractionTask(songData, callback);
             }
-        } else checkInternetAndStartExtractionTask(songData);
+        } else checkInternetAndStartExtractionTask(songData, callback);
 
         addSongToRecentsList(songData);
     }
@@ -139,28 +145,63 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         Bundle bundle = new Bundle();
         bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.START);
         bundle.putParcelable(Constants.EXTRA_SONG, songData);
-        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle);
+        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle, context.get());
         // Preparing player UI
         view.get().initPlayerSlider(songData);
     }
 
     @Override
-    public boolean makeYoutubeSearch(String searchQuery) {
+    public boolean searchYoutubeFirstPage(String searchQuery) {
+        if (checkIfSearchIsPossible(searchQuery)) return false;
+        new VideoSearchAsyncTask(this, view, utils).execute(searchQuery);
+        return true;
+    }
+
+    private boolean checkIfSearchIsPossible(String searchQuery) {
         if (searchQuery.length() == 0) {
             callSimpleDialog(context.get(), R.string.empty_search_query_error_message, R.string.error);
-            return false;
-        } else if (!utils.isNetworkAvailable()) {
+            return true;
+        } else if (!utils.isNetworkAvailable(context.get())) {
             callSimpleDialog(context.get(), R.string.network_error_message, R.string.error);
-            return false;
+            return true;
         }
         view.get().showLoadingIndicator(true);
-        new VideoSearchAsyncTask(this, view, utils).execute(searchQuery);
+        return false;
+    }
+
+    @Override
+    public boolean searchYoutubeNextPage(String searchQuery, String nextPageToken) {
+        if (checkIfSearchIsPossible(searchQuery)) return false;
+        new VideoSearchAsyncTask(this, view, utils).execute(searchQuery, nextPageToken);
         return true;
     }
 
     @Override
     public Observable<SearchSuggestionsResponse> getSearchSuggestions(String query) {
         return dataSource.getSuggestionsRx(query);
+    }
+
+    @Override
+    public void downloadStream(YoutubeSongDto songData) {
+
+        AudioStreamExtractionAsyncTask.Callback callback = (taskResult) -> {
+            Uri uri = Uri.parse(songData.getStreamUrl());
+            DownloadRequest downloadRequest = new DownloadRequest(
+                    uri.toString(),
+                    DownloadRequest.TYPE_PROGRESSIVE,
+                    uri,
+                    /* streamKeys= */ Collections.emptyList(),
+                    /* customCacheKey= */ null,
+                    null);
+
+            DownloadService.sendAddDownload(
+                    context.get(), ExoDownloadService.class, downloadRequest, /* foreground= */ false);
+        };
+        checkInternetAndStartExtractionTask(songData, callback);
+
+        new CommonUtils().isServiceRunning(ExoDownloadService.class, App.getInstance());
+
+
     }
 
     @Override
@@ -217,22 +258,22 @@ public class MainActivityPresenterImpl implements MainActivityContract.Presenter
         view.get().showPlaylistEditingFragment(videoDataDto);
     }
 
-    private void checkInternetAndStartExtractionTask(YoutubeSongDto songData) {
-        if (utils.isNetworkAvailable()) {
-            new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData)
+    private void checkInternetAndStartExtractionTask(YoutubeSongDto songData, AudioStreamExtractionAsyncTask.Callback callback) {
+        if (utils.isNetworkAvailable(context.get())) {
+            new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData, callback)
                     .execute(songData.getVideoId());
         } else {
             DialogInterface.OnClickListener positiveCallback = (dialog, which) -> {
-                if (utils.isNetworkAvailable()) {
-                    new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData)
+                if (utils.isNetworkAvailable(context.get())) {
+                    new AudioStreamExtractionAsyncTask(this, view, audioStreamsUtils, songData, callback)
                             .execute(songData.getVideoId());
                 } else {
-                    checkInternetAndStartExtractionTask(songData);
+                    checkInternetAndStartExtractionTask(songData, callback);
                 }
             };
             DialogInterface.OnClickListener negativeCallback = (dialog, which) -> dialog.dismiss();
             utils.createAlertDialog(R.string.no_connection_error_message_title, R.string.network_error_message,
-                    false, R.string.try_again_message, positiveCallback, R.string.button_cancel, negativeCallback).show();
+                    false, R.string.try_again_message, positiveCallback, R.string.button_cancel, negativeCallback, context.get()).show();
         }
     }
 }

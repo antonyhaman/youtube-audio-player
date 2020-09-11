@@ -4,9 +4,8 @@ import com.github.kotvertolet.youtubeaudioplayer.activities.BasePresenter;
 import com.github.kotvertolet.youtubeaudioplayer.activities.BaseView;
 import com.github.kotvertolet.youtubeaudioplayer.data.PlaylistWithSongs;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.SearchSuggestionsResponse;
+import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
-
-import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -23,13 +22,13 @@ public interface MainActivityContract {
 
         void showRecommendations();
 
-        void showSearchResults(List<YoutubeSongDto> data);
+        void showSearchResults(YoutubeSearchResult data);
 
         void showPlaylistEditingFragment(YoutubeSongDto songDto);
 
         void initPlayerSlider(YoutubeSongDto data);
 
-        void setPlayerPlayingState(boolean isPlaying);
+        void setPlayButtonState(boolean isPlaying);
     }
 
     interface Presenter extends BasePresenter {
@@ -40,9 +39,13 @@ public interface MainActivityContract {
 
         void playPreparedStream(YoutubeSongDto data);
 
-        boolean makeYoutubeSearch(String searchQuery);
+        boolean searchYoutubeFirstPage(String searchQuery);
+
+        boolean searchYoutubeNextPage(String searchQuery, String nextPageToken);
 
         Observable<SearchSuggestionsResponse> getSearchSuggestions(String query);
+
+        void downloadStream(YoutubeSongDto songData);
 
         void preparePlaybackQueueAndPlay(PlaylistWithSongs playlistWithSongs, int position);
 

@@ -6,11 +6,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityContract;
 import com.github.kotvertolet.youtubeaudioplayer.custom.view.CustomRecyclerView;
@@ -21,6 +20,9 @@ import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class HorizontalRecommendationsAdapter extends CustomRecyclerView.Adapter<HorizontalRecommendationsAdapter.ViewHolder> {
 
@@ -123,6 +125,8 @@ public class HorizontalRecommendationsAdapter extends CustomRecyclerView.Adapter
                     case R.id.add_to_playlist:
                         presenter.addToPlaylist(model);
                         return true;
+                    case R.id.download:
+                        Toast.makeText(App.getInstance(), "Temporarily disabled", Toast.LENGTH_SHORT).show();
                     default:
                         return false;
                 }

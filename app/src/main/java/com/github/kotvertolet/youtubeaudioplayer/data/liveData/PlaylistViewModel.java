@@ -2,15 +2,15 @@ package com.github.kotvertolet.youtubeaudioplayer.data.liveData;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.MutableLiveData;
-
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.PlaylistDto;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
 
 public class PlaylistViewModel extends AndroidViewModel {
 

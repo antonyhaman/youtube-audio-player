@@ -4,13 +4,13 @@
         android:defaultValue="false"
         android:key="@string/key_pref_no_recommendations"
         android:summary="@string/pref_description_load_recommendations"
-        android:title="@string/pref_title_load_recommendations"/>
+        android:title="@string/pref_title_load_recommendations" />
 
     <SwitchPreference
         android:defaultValue="false"
         android:key="@string/key_pref_save_in_cache_only_wifi"
         android:summary="@string/pref_description_save_in_cache_only_wifi"
-        android:title="@string/pref_title_save_in_cache_only_wifi"/>
+        android:title="@string/pref_title_save_in_cache_only_wifi" />
 
     <ListPreference
         android:defaultValue="@string/pref_default_cache_size"
@@ -20,7 +20,7 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:summary="@string/pref_description_cache_size"
-        android:title="@string/pref_title_cache_size"/>
+        android:title="@string/pref_title_cache_size" />
 
     <ListPreference
         android:defaultValue="@string/pref_default_audio_quality"
@@ -30,5 +30,5 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:summary="@string/pref_description_audio_quality"
-        android:title="@string/pref_title_audio_quality"/>
+        android:title="@string/pref_title_audio_quality" />
 </PreferenceScreen>

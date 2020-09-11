@@ -6,7 +6,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_vertical_recommendations"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>

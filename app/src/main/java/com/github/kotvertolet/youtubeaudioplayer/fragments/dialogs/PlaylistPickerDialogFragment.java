@@ -7,13 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivity;
 import com.github.kotvertolet.youtubeaudioplayer.activities.main.MainActivityContract;
@@ -22,25 +15,30 @@ import com.github.kotvertolet.youtubeaudioplayer.data.liveData.AllPlaylistsAndSo
 
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class PlaylistPickerDialogFragment extends DialogFragment {
 
     private WeakReference<Context> context;
-    private PlaylistSelectorAdapter playlistAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getDialog().setTitle("Playlists");
         getDialog().setCancelable(true);
-        View v = inflater.inflate(R.layout.layout_playlist_picker, container);
-        return v;
+        return inflater.inflate(R.layout.layout_playlist_picker, container);
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         MainActivityContract.Presenter presenter = ((MainActivity) context.get()).getPresenter();
-        playlistAdapter = new PlaylistSelectorAdapter(presenter, getDialog());
+        PlaylistSelectorAdapter playlistAdapter = new PlaylistSelectorAdapter(presenter, getDialog());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context.get());
         RecyclerView rvPlaylists = view.findViewById(R.id.rl_playlists);
         rvPlaylists.setLayoutManager(linearLayoutManager);

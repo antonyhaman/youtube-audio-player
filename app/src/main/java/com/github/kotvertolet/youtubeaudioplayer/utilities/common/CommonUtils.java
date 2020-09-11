@@ -15,6 +15,17 @@ import android.telephony.TelephonyManager;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
 
+import com.github.kotvertolet.youtubeaudioplayer.R;
+import com.github.kotvertolet.youtubeaudioplayer.data.NetworkType;
+
+import org.joda.time.Period;
+
+import java.text.ChoiceFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -22,37 +33,20 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.github.kotvertolet.youtubeaudioplayer.R;
-import com.github.kotvertolet.youtubeaudioplayer.data.NetworkType;
-
-import org.joda.time.Period;
-
-import java.lang.ref.WeakReference;
-import java.text.ChoiceFormat;
-import java.text.NumberFormat;
-
 public class CommonUtils {
 
-    private WeakReference<Context> context;
-    private LocalBroadcastManager localBroadcastManager;
-
-    public CommonUtils(Context context) {
-        this.context = new WeakReference<>(context);
-        localBroadcastManager = LocalBroadcastManager.getInstance(context);
-    }
-
-    public String getCountryCode() {
-        TelephonyManager tm = (TelephonyManager) context.get().getSystemService(Context.TELEPHONY_SERVICE);
+    public String getCountryCode(Context context) {
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getNetworkCountryIso();
     }
 
-    public NetworkInfo getNetworkInfo() {
-        ConnectivityManager cm = (ConnectivityManager) context.get().getSystemService(Context.CONNECTIVITY_SERVICE);
+    public NetworkInfo getNetworkInfo(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo();
     }
 
-    public NetworkType getNetworkClass() {
-        NetworkInfo info = getNetworkInfo();
+    public NetworkType getNetworkClass(Context context) {
+        NetworkInfo info = getNetworkInfo(context);
         if (info == null || !info.isConnected())
             return NetworkType.TYPE_NOT_CONNECTED; //not connected
         if (info.getType() == ConnectivityManager.TYPE_WIFI)
@@ -88,8 +82,8 @@ public class CommonUtils {
         return NetworkType.TYPE_NOT_CONNECTED;
     }
 
-    public boolean isNetworkAvailable() {
-        NetworkInfo networkInfo = getNetworkInfo();
+    public boolean isNetworkAvailable(Context context) {
+        NetworkInfo networkInfo = getNetworkInfo(context);
         return networkInfo != null && networkInfo.isConnected();
     }
 
@@ -155,16 +149,16 @@ public class CommonUtils {
         } else return "";
     }
 
-    public float dpInPx(int dp) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.get().getResources().getDisplayMetrics());
+    public float dpInPx(int dp, Context context) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
     public int getAndroidVersion() {
         return Build.VERSION.SDK_INT;
     }
 
-    public boolean isServiceRunning(Class tClass) {
-        ActivityManager manager = (ActivityManager) context.get().getSystemService(Context.ACTIVITY_SERVICE);
+    public boolean isServiceRunning(Class tClass, Context context) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (tClass.getName().equals(service.service.getClassName())) {
@@ -174,16 +168,18 @@ public class CommonUtils {
         return false;
     }
 
-    public void sendLocalBroadcastMessage(String action, Bundle bundle) {
+    public void sendLocalBroadcastMessage(String action, Bundle bundle, Context context) {
         Intent intent = new Intent(action);
         intent.putExtras(bundle);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastManager.sendBroadcast(intent);
     }
 
     public AlertDialog createAlertDialog(int titleId, int messageId, boolean isCancelable,
                                          int positiveButtonId, DialogInterface.OnClickListener positiveCallback,
-                                         int negativeButtonId, DialogInterface.OnClickListener negativeCallback) {
-        AppCompatActivity activity = (AppCompatActivity) context.get();
+                                         int negativeButtonId, DialogInterface.OnClickListener negativeCallback,
+                                         Context context) {
+        AppCompatActivity activity = (AppCompatActivity) context;
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(activity, R.style.AlertDialogTheme));
         builder = builder.setTitle(titleId)
                 .setMessage(messageId);
@@ -203,8 +199,9 @@ public class CommonUtils {
 
     public AlertDialog createAlertDialog(String title, String message, boolean isCancelable,
                                          int positiveButtonId, DialogInterface.OnClickListener positiveCallback,
-                                         int negativeButtonId, DialogInterface.OnClickListener negativeCallback) {
-        AppCompatActivity activity = (AppCompatActivity) context.get();
+                                         int negativeButtonId, DialogInterface.OnClickListener negativeCallback,
+                                         Context context) {
+        AppCompatActivity activity = (AppCompatActivity) context;
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(activity, R.style.AlertDialogTheme));
         builder = builder.setTitle(title)
                 .setMessage(message);
@@ -222,8 +219,8 @@ public class CommonUtils {
         return builder.create();
     }
 
-    public Bitmap getBitmapFromVectorDrawable(int drawableId) {
-        Drawable drawable = ContextCompat.getDrawable(context.get(), drawableId);
+    public Bitmap getBitmapFromVectorDrawable(int drawableId, Context context) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             drawable = (DrawableCompat.wrap(drawable)).mutate();
         }
@@ -235,6 +232,10 @@ public class CommonUtils {
         drawable.draw(canvas);
 
         return bitmap;
+    }
+
+    public String createChannelId() {
+        return String.valueOf(Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.US).format(new Date())));
     }
 }
 

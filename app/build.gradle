@@ -8,15 +8,15 @@ android {
         applicationId "com.github.kotvertolet.youtubeaudioplayer"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.2"
+        versionCode 4
+        versionName "1.1.3"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
         }
@@ -24,27 +24,14 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
         }
     }
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-
-//    applicationVariants.all { variant ->
-//        variant.outputs.all {
-//            outputFileName = "${variant.name}-${variant.versionName}.apk"
-//        }
-//        variant.assembleProvider.configure { assemble ->
-//            assemble.doLast {
-//                copy {
-//                    from variant.outputs*.outputFile
-//                    into getRootProject().getRootDir().toString()+"/apk/${variant.dirName}"
-//                }
-//                delete variant.outputs*.outputFile
-//            }
-//        }
-//    }
 }
 
 dependencies {
@@ -52,17 +39,17 @@ dependencies {
 
     // Core
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
 
     // Support
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'com.google.android.material:material:1.3.0-alpha02'
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
+    implementation "com.squareup.retrofit2:retrofit:2.7.2"
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
-    implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.2'
 
     // Gson
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -73,9 +60,6 @@ dependencies {
 
     // Sliding panel
     implementation 'com.sothree.slidinguppanel:library:3.3.1'
-
-    // Ripple for SDK 14+
-    implementation 'com.balysv:material-ripple:1.0.2'
 
     // Joda
     implementation 'joda-time:joda-time:2.10.1'
@@ -96,13 +80,15 @@ dependencies {
     implementation 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:1.0.1'
 
     // Exo Player
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.9.6'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.9.6'
-    implementation 'com.google.android.exoplayer:exoplayer-dash:2.9.6'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.4'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.4'
 
     // Multidex
     implementation 'com.android.support:multidex:1.0.3'
 
+    // Ripple for API <21
+    //implementation 'com.balysv:material-ripple:1.0.2'
+
     // YoutubeJExtractor
-    implementation 'com.github.kotvertolet:youtube-jextractor:0.2.5'
+    implementation 'com.github.kotvertolet:youtube-jextractor:0.3.1'
 }

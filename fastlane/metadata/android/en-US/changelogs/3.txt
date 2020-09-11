@@ -1,0 +1,4 @@
+- Fixed numerous bugs and improved stability
+- Moved to official Retrofit RxJava2 Adapter
+- Bumped Exoplayer version
+- Min SDK level is 21

@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.MatrixCursor;
 import android.media.AudioManager;
 import android.os.AsyncTask;
@@ -16,31 +17,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.provider.BaseColumns;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.AppCompatSeekBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.cursoradapter.widget.CursorAdapter;
-import androidx.cursoradapter.widget.SimpleCursorAdapter;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.MutableLiveData;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -52,6 +40,7 @@ import com.github.kotvertolet.youtubeaudioplayer.data.liveData.AllPlaylistsAndSo
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.PlaylistsWithSongsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.RecommendationsViewModel;
 import com.github.kotvertolet.youtubeaudioplayer.data.liveData.SearchResultsViewModel;
+import com.github.kotvertolet.youtubeaudioplayer.data.models.YoutubeSearchResult;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.PlaylistDto;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
 import com.github.kotvertolet.youtubeaudioplayer.fragments.PlaylistEditingFragment;
@@ -59,6 +48,7 @@ import com.github.kotvertolet.youtubeaudioplayer.fragments.RecommendationsFragme
 import com.github.kotvertolet.youtubeaudioplayer.fragments.SearchResultsFragment;
 import com.github.kotvertolet.youtubeaudioplayer.fragments.SettingsFragment;
 import com.github.kotvertolet.youtubeaudioplayer.fragments.dialogs.PlaylistPickerDialogFragment;
+import com.github.kotvertolet.youtubeaudioplayer.listeners.SlidingPanelListener;
 import com.github.kotvertolet.youtubeaudioplayer.services.ExoPlayerService;
 import com.github.kotvertolet.youtubeaudioplayer.services.PlayerAction;
 import com.github.kotvertolet.youtubeaudioplayer.tasks.LoadPlaylistsAsyncTask;
@@ -79,10 +69,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.ACTION_PLAYER_CHANGE_STATE;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.ACTION_PLAYER_STATE_CHANGED;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.ACTION_PLAYLIST_NAVIGATION;
@@ -94,6 +96,8 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYBACK_PROGRESS_CHANGED;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_ERROR;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_ERROR_THROWABLE;
+import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_PAUSED;
+import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_RESUMED;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PREFERENCE_REPEAT;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PREFERENCE_SHUFFLE;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.RECOMMENDATIONS_RECENT;
@@ -106,12 +110,12 @@ import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.EXPANDE
 public class MainActivity extends AppCompatActivity implements MainActivityContract.View,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final static String TAG = "YT_PLAYER_DEBUG";
+    private final static String TAG = MainActivity.class.getSimpleName();
     private static final AtomicInteger backClicksCount = new AtomicInteger();
-    private AtomicBoolean isStopping = new AtomicBoolean(false);
     private final FragmentManager fm = getSupportFragmentManager();
     private final Handler mHandler = new Handler();
     private final Runnable backClickRunnable = () -> backClicksCount.set(0);
+    private AtomicBoolean isStopping = new AtomicBoolean(false);
     private boolean isPlaybackEnded = false;
     private SharedPreferences sharedPreferences;
     private String pendingSearchQuery = "";
@@ -122,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     private PlaybackQueueAdapter playbackQueueAdapter;
     private RelativeLayout rlSeeKBarBlock;
     private SlidingUpPanelLayout slidingUpPanelLayout;
-    private AppCompatImageView ivPlayerThumb;
+    private ImageView ivPlayerThumb;
     private AppCompatSeekBar sbPlayerProgress;
     private AppCompatImageButton playerButtonPlayPause;
     private TextView tvPlayerSongTitle;
@@ -136,12 +140,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     private AppCompatImageButton acibShuffleEnabled;
     private TextView tvTrackCurrentTime;
     private TextView tvTrackDuration;
-    private AppCompatImageView ivChevron;
+    private ImageView ivChevron;
     private PlayerStateBroadcastReceiver playerStateBroadcastReceiver;
     private PlaylistNavigationBroadcastReceiver playlistNavigationBroadcastReceiver;
-    private View llControls;
+    private LinearLayout llControls;
     private ReceiverManager receiverManager;
     private ComponentName componentName;
+    private SlidingPanelListener slidingPanelListener;
+    private AtomicBoolean isLoading = new AtomicBoolean(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         loadingIndicator = findViewById(R.id.pb_loading_indicator);
         presenter = new MainActivityPresenterImpl(this, this);
-        utils = new CommonUtils(this);
+        utils = new CommonUtils();
         receiverManager = ReceiverManager.getInstance(this);
         registerReceiver(playerStateBroadcastReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         showRecommendations();
@@ -160,6 +166,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         Log.d(TAG, "Main activity has been created");
         registerReceivers();
         startExoPlayerService();
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Have to refresh transformable elements on sliding panel after changing orientation
+        if (slidingUpPanelLayout.getPanelState().equals(EXPANDED)) {
+            slidingPanelListener.refreshTransformableElements();
+        }
     }
 
     @Override
@@ -230,12 +246,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (query.length() > 0) {
+                if (query.length() > 0 && !isLoading.get()) {
                     // Clearing pending search query as it will be executed
                     pendingSearchQuery = null;
                     // Do this trick to hide suggestions list
                     ((AutoCompleteTextView) searchView.findViewById(R.id.search_src_text)).dismissDropDown();
-                    return presenter.makeYoutubeSearch(searchView.getQuery().toString());
+                    return presenter.searchYoutubeFirstPage(searchView.getQuery().toString());
                 }
                 return false;
             }
@@ -255,7 +271,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                                         // Clearing the old suggestions before adding the new ones
                                         suggestions.clear();
                                         suggestions.addAll(tempList);
-                                        String[] columns = {BaseColumns._ID,
+                                        String[] columns = {
+                                                BaseColumns._ID,
                                                 SearchManager.SUGGEST_COLUMN_TEXT_1,
                                                 SearchManager.SUGGEST_COLUMN_INTENT_DATA,
                                         };
@@ -310,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                     recommendationsMap.remove(RECOMMENDATIONS_RECENT);
                     recommendationsViewModel.setValue(recommendationsMap);
                 }
-                showToast("Db is cleared", Toast.LENGTH_SHORT);
+                showToast("Database is cleared", Toast.LENGTH_SHORT);
                 return true;
             case R.id.action_playlists:
                 if (AllPlaylistsAndSongsViewModel.getInstance().getData().getValue().size() > 0) {
@@ -320,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                             -> dialog.dismiss();
                     utils.createAlertDialog("Error",
                             "There are no playlists to display", true,
-                            R.string.button_ok, listener, 0, null).show();
+                            R.string.button_ok, listener, 0, null, this).show();
                 }
                 return true;
             case R.id.action_close_app:
@@ -335,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     }
 
     @Override
-    public void showSearchResults(List<YoutubeSongDto> data) {
+    public void showSearchResults(YoutubeSearchResult data) {
         showLoadingIndicator(false);
         minimizePlayer();
         SearchResultsFragment addedFragment =
@@ -387,7 +404,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     }
 
     @Override
-    public void setPlayerPlayingState(boolean isPlaying) {
+    public void setPlayButtonState(boolean isPlaying) {
         if (isPlaying) {
             playerButtonPlayPause.setImageResource(R.drawable.ic_pause_black_40dp);
         } else {
@@ -398,8 +415,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     @Override
     public void showLoadingIndicator(boolean show) {
         if (!show) {
+            isLoading.set(false);
             loadingIndicator.setVisibility(View.GONE);
         } else {
+            isLoading.set(true);
             loadingIndicator.setVisibility(View.VISIBLE);
         }
     }
@@ -450,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     }
 
     public ComponentName startExoPlayerService() {
-        if (!utils.isServiceRunning(ExoPlayerService.class)) {
+        if (!utils.isServiceRunning(ExoPlayerService.class, this)) {
             Intent intent = new Intent(this, ExoPlayerService.class);
             componentName = startService(intent);
             Log.d(TAG, "ExoPlayer service start initiated");
@@ -530,13 +549,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                     if (isPlaybackEnded) {
                         Bundle bundle = new Bundle();
                         bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.PLAY_AGAIN);
-                        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle);
+                        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle, this);
                         //presenter.playAgain();
                         Log.i(TAG, "Previous song requested");
                     } else {
                         Bundle bundle = new Bundle();
                         bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.PAUSE_PLAY);
-                        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle);
+                        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle, this);
                     }
                 });
         RxView.clicks(buttonPlayerBack).throttleFirst(2000, TimeUnit.MILLISECONDS)
@@ -557,7 +576,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                     Bundle bundle = new Bundle();
                     bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.CHANGE_PLAYBACK_PROGRESS);
                     bundle.putInt(EXTRA_TRACK_PROGRESS, progress);
-                    utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle);
+                    utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle, getParent());
                 }
             }
 
@@ -569,29 +588,17 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
-        slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-                int controlsMultiplier = 1;
-                double thumbnailMultiplier = 1;
-                if (displayMetrics.widthPixels > 1080) {
-                    controlsMultiplier = 4;
-                    thumbnailMultiplier = 1.3;
-                }
-
-                transformThumbnail(slideOffset, thumbnailMultiplier);
-                transformInfo(slideOffset);
-                transformControls(slideOffset, controlsMultiplier);
-                //transformChevron(slideOffset);
-            }
-
-            @Override
-            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState,
-                                            SlidingUpPanelLayout.PanelState newState) {
-            }
-        });
+        initSlidingPanelListener();
+        slidingUpPanelLayout.addPanelSlideListener(slidingPanelListener
+        );
     }
+
+    private void initSlidingPanelListener() {
+        slidingPanelListener = new SlidingPanelListener(this, ivChevron,
+                llControls, ivPlayerThumb, tvPlayerSongTitle, tvPlayerSongChannel,
+                tvPlayerSecondarySongTitle, tvPlayerSecondarySongChannel);
+    }
+
 
     private void setupShuffleButtons() {
         boolean shuffle = sharedPreferences.getBoolean(PREFERENCE_SHUFFLE, false);
@@ -625,49 +632,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                 sharedPreferences.edit().putInt(PREFERENCE_REPEAT, REPEAT_MODE_NO_REPEAT).apply());
     }
 
-    private void transformChevron(float slideOffset) {
-        ivChevron.setRotation(slideOffset * 90);
-
-    }
-
-    private void transformThumbnail(float slideOffset, double multiplier) {
-        int initialDimensionsInPx = (int) utils.dpInPx(50);
-        int initialLeftMargin = (int) (utils.dpInPx(60) * multiplier);
-        int initialTopMargin = (int) utils.dpInPx(5);
-
-        int newDimen = (int) Math.ceil((slideOffset) * initialDimensionsInPx + initialDimensionsInPx);
-        int newLeftMargin = (int) Math.ceil((slideOffset) * initialLeftMargin + initialTopMargin);
-        int newMarginTop = (int) Math.ceil((slideOffset) * initialTopMargin + initialTopMargin);
-        RelativeLayout.LayoutParams thumbnailParams = new RelativeLayout.LayoutParams(newDimen, newDimen);
-
-        thumbnailParams.setMargins(newLeftMargin, newMarginTop, 0, 0);
-        ivPlayerThumb.setLayoutParams(thumbnailParams);
-    }
-
-    private void transformControls(float slideOffset, int multiplier) {
-        int initialDimensionsInPx = (int) utils.dpInPx(20) * multiplier;
-        int topMarginCoef = (int) (utils.dpInPx(35));
-        int initialTopMargin = (int) (utils.dpInPx(10));
-
-        int newTopMargin = (int) Math.ceil((slideOffset) * topMarginCoef + initialTopMargin);
-        int newRightMargin = (int) Math.ceil((slideOffset) * initialDimensionsInPx);
-
-        RelativeLayout.LayoutParams controlParams = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        controlParams.setMargins(0, newTopMargin, newRightMargin, 0);
-        controlParams.addRule(RelativeLayout.LEFT_OF, R.id.iv_chevron);
-        llControls.setLayoutParams(controlParams);
-    }
-
-    private void transformInfo(float offset) {
-        float mainAlpha = (float) (1.0 - offset * 2);
-        float secondaryAlpha = (float) (offset * 1.4);
-        tvPlayerSongTitle.setAlpha(mainAlpha);
-        tvPlayerSongChannel.setAlpha(mainAlpha);
-        tvPlayerSecondarySongTitle.setAlpha(secondaryAlpha);
-        tvPlayerSecondarySongChannel.setAlpha(secondaryAlpha);
-//        isRepeatSwitcher.setAlpha(secondaryAlpha);
-//        isShuffleSwitcher.setAlpha(secondaryAlpha);
-    }
 
     public MainActivityContract.Presenter getPresenter() {
         return presenter;
@@ -711,37 +675,38 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
     }
 
     public class PlayerStateBroadcastReceiver extends BroadcastReceiver {
+
+        private final String TAG = PlayerStateBroadcastReceiver.class.getSimpleName();
+
         @Override
         public void onReceive(Context context, Intent intent) {
             int playerStateCode = intent.getIntExtra(EXTRA_PLAYER_STATE_CODE, -1);
-            Log.i(this.getClass().getSimpleName(), String.format("Intent with action %s received", intent.getAction()));
+            Log.i(TAG, String.format("Intent with action %s received", intent.getAction()));
             switch (playerStateCode) {
                 case Player.STATE_READY:
                     isPlaybackEnded = false;
-
                     showLoadingIndicator(false);
                     int trackDuration = intent.getIntExtra(EXTRA_TRACK_DURATION, 0);
                     boolean isPlaying = intent.getBooleanExtra(EXTRA_PLAYBACK_STATUS, false);
-                    setPlayerPlayingState(isPlaying);
+                    setPlayButtonState(isPlaying);
                     sbPlayerProgress.setMax(trackDuration);
                     tvTrackDuration.setText(utils.convertMillsIntoTimeString(trackDuration));
-                    Log.i(this.getClass().getSimpleName(), "Playback state ready, code: " + playerStateCode);
+                    Log.i(TAG, "Playback state ready, code: " + playerStateCode);
                     break;
                 case Player.STATE_ENDED:
                     isPlaybackEnded = true;
-
-                    setPlayerPlayingState(false);
+                    setPlayButtonState(false);
+                    tvTrackCurrentTime.setText("00:00");
                     sbPlayerProgress.setProgress(0);
                     int repeatMode = sharedPreferences.getInt(PREFERENCE_REPEAT, 0);
                     if (repeatMode == REPEAT_MODE_REPEAT_ONE) {
-                        //presenter.playAgain();
                         Bundle bundle = new Bundle();
                         bundle.putInt(EXTRA_PLAYER_STATE_CODE, PlayerAction.PLAY_AGAIN);
-                        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle);
+                        utils.sendLocalBroadcastMessage(ACTION_PLAYER_CHANGE_STATE, bundle, getParent());
                     } else {
                         presenter.playNextPlaylistItem();
                     }
-                    Log.i(this.getClass().getSimpleName(), "Playback ended, code: " + playerStateCode);
+                    Log.i(TAG, "Playback ended, code: " + playerStateCode);
                     break;
                 case Player.STATE_BUFFERING:
                     showLoadingIndicator(true);
@@ -750,20 +715,28 @@ public class MainActivity extends AppCompatActivity implements MainActivityContr
                     int trackCurrentPosition = intent.getIntExtra(EXTRA_TRACK_PROGRESS, -1);
                     sbPlayerProgress.setProgress(trackCurrentPosition);
                     tvTrackCurrentTime.setText(utils.convertMillsIntoTimeString(trackCurrentPosition));
-                    Log.i(this.getClass().getSimpleName(), "Progress changed: " + utils.convertMillsIntoTimeString(trackCurrentPosition));
+                    Log.i(TAG, "Progress changed: " + utils.convertMillsIntoTimeString(trackCurrentPosition));
                     break;
                 case Player.STATE_IDLE:
-                    Log.i(this.getClass().getSimpleName(), "Player is idling, status code: " + playerStateCode);
+                    Log.i(TAG, "Player is idling, status code: " + playerStateCode);
                     break;
                 case PLAYER_ERROR:
-                    setPlayerPlayingState(false);
+                    setPlayButtonState(false);
                     sbPlayerProgress.setProgress(0);
                     Exception exception = (Exception) Objects.requireNonNull(intent.getExtras()).getSerializable(PLAYER_ERROR_THROWABLE);
                     presenter.handleException(exception);
-                    Log.e(this.getClass().getSimpleName(), "Player error occurred");
+                    Log.e(TAG, "Player error occurred");
+                    break;
+                case PLAYER_PAUSED:
+                    setPlayButtonState(false);
+                    Log.e(TAG, "Player paused");
+                    break;
+                case PLAYER_RESUMED:
+                    setPlayButtonState(true);
+                    Log.e(TAG, "Player resumed");
                     break;
                 default:
-                    Log.e(this.getClass().getSimpleName(), "Wrong player state code: " + playerStateCode);
+                    Log.e(TAG, "Wrong player state code: " + playerStateCode);
                     break;
             }
         }

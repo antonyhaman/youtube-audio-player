@@ -1,0 +1,2 @@
+- Fixed problem with exceeding google api quota limit by implementing YoutubeApiKeysProvider that stores multiple keys (in release version >10) and provides them to the app sequentially so each key's quota will be used evenly
+- Implemented pagination for search results, before 1.1.0 search results were limited to 25

@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.activities.splash.SplashActivityContract;
+import com.github.kotvertolet.youtubeaudioplayer.custom.exceptions.UserFriendlyRuntimeException;
 import com.github.kotvertolet.youtubeaudioplayer.custom.exceptions.VideoIsDeletedException;
 import com.github.kotvertolet.youtubeaudioplayer.data.dataSource.RemoteDataSource;
 import com.github.kotvertolet.youtubeaudioplayer.data.models.youtube.videos.list.Snippet;
@@ -48,11 +49,17 @@ public class YoutubeRecommendationsFetchUtils {
     @SuppressLint("CheckResult")
     public void fetchYoutubeRecommendations() {
         Maybe<YoutubeVideoListResponse> topTracks =
-                remoteDataSource.getTopTracksPlaylist().subscribeOn(Schedulers.newThread());
+                remoteDataSource.getTopTracksPlaylist().subscribeOn(Schedulers.newThread()).doOnError(error -> {
+                    throw new Exception(error);
+                });
         Maybe<YoutubeVideoListResponse> mostViewed =
-                remoteDataSource.getMostViewedPlaylist().subscribeOn(Schedulers.newThread());
+                remoteDataSource.getMostViewedPlaylist().subscribeOn(Schedulers.newThread()).doOnError(error -> {
+                    throw new Exception(error);
+                });
         Maybe<YoutubeVideoListResponse> newMusicThisWeek =
-                remoteDataSource.getNewMusicThisWeekPlaylist().subscribeOn(Schedulers.newThread());
+                remoteDataSource.getNewMusicThisWeekPlaylist().subscribeOn(Schedulers.newThread()).doOnError(error -> {
+                    throw new Exception(error);
+                });
 
         Maybe.zip(topTracks, mostViewed, newMusicThisWeek, (topTracksResponse, mostViewedResponse, newMusicResponse) -> {
             HashMap<String, List<String>> rawRecommendations = new HashMap<>();

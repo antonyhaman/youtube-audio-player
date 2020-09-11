@@ -3,13 +3,14 @@ package com.github.kotvertolet.youtubeaudioplayer.utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.net.rtp.AudioStream;
+import android.util.Pair;
 
 import com.github.kotvertolet.youtubeaudioplayer.App;
 import com.github.kotvertolet.youtubeaudioplayer.R;
 import com.github.kotvertolet.youtubeaudioplayer.custom.exceptions.UserFriendlyException;
 import com.github.kotvertolet.youtubeaudioplayer.data.NetworkType;
 import com.github.kotvertolet.youtubeaudioplayer.db.dto.YoutubeSongDto;
+import com.github.kotvertolet.youtubeaudioplayer.utilities.common.CommonUtils;
 import com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants;
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor;
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException;
@@ -32,42 +33,31 @@ public class AudioStreamsUtils {
         }
         // TODO: Do this in a good way
         catch (ExtractionException e) {
-            throw new UserFriendlyException(R.string.generic_error_message,
+            throw new UserFriendlyException(R.string.audio_extraction_failed_error_message,
                     e.getMessage());
         } catch (YoutubeRequestException e) {
-            throw new UserFriendlyException(R.string.generic_error_message,
+            throw new UserFriendlyException(R.string.youtube_request_failed_error_message,
                     e.getMessage());
         }
         return youtubeVideoData;
     }
 
-    public StreamItem getAudioStreamForVideo(YoutubeVideoData videoData) throws UserFriendlyException {
-        return getBestStreamForInternetType(videoData);
-    }
-
-    public CacheUtil.CachingCounters getCachingCountersForSong(YoutubeSongDto songData) {
-        Uri uri = Uri.parse(songData.getStreamUrl());
-        return getCachingCountersForSong(uri);
-    }
-
-    public CacheUtil.CachingCounters getCachingCountersForSong(Uri uri) {
-        CacheUtil.CachingCounters cachingCounters = new CacheUtil.CachingCounters();
-        CacheUtil.getCached(new DataSpec(uri), App.getInstance().getPlayerCache(), cachingCounters);
-        return cachingCounters;
+    public StreamItem getAudioStreamForVideo(YoutubeVideoData videoData, Context context) throws UserFriendlyException {
+        return getBestStreamForInternetType(videoData, context);
     }
 
     public boolean isSongFullyCached(YoutubeSongDto songData) {
-        CacheUtil.CachingCounters cachingCounters = getCachingCountersForSong(songData);
-        App.getInstance().getPlayerCache().isCached(songData.getStreamUrl(), 0, cachingCounters.contentLength);
-        return cachingCounters.alreadyCachedBytes == cachingCounters.contentLength;
+        Pair<Long, Long> pair = CacheUtil.getCached(new DataSpec(Uri.parse(songData.getStreamUrl())),
+                App.getInstance().getPlayerCache(), null);
+        return pair.first.equals(pair.second);
     }
 
     public boolean isSongFullyCached(Uri uri) {
-        CacheUtil.CachingCounters cachingCounters = getCachingCountersForSong(uri);
-        return cachingCounters.alreadyCachedBytes == cachingCounters.contentLength;
+        Pair<Long, Long> pair = CacheUtil.getCached(new DataSpec(uri), App.getInstance().getPlayerCache(), null);
+        return pair.first.equals(pair.second);
     }
 
-    private StreamItem getBestStreamForInternetType(YoutubeVideoData youtubeVideoData) throws UserFriendlyException {
+    private StreamItem getBestStreamForInternetType(YoutubeVideoData youtubeVideoData, Context context) throws UserFriendlyException {
         List<AdaptiveAudioStream> audioStreamsList = youtubeVideoData.getStreamingData().getAdaptiveAudioStreams();
         if (audioStreamsList.size() > 0) {
             // Sorting streams by bitrate, from lowest to highest
@@ -78,7 +68,7 @@ public class AudioStreamsUtils {
 
             switch (audioQualitySetting) {
                 case 0:
-                    return getBestStreamByInternetType(audioStreamsList);
+                    return getBestStreamByInternetType(audioStreamsList, context);
                 case 1:
                     return audioStreamsList.get(audioStreamsList.size() - 1);
                 case 2:
@@ -98,10 +88,11 @@ public class AudioStreamsUtils {
     }
 
 
-    private StreamItem getBestStreamByInternetType(List<AdaptiveAudioStream> audioStreamsList) {
-        NetworkType networkType = App.getInstance().getCommonUtils().getNetworkClass();
+    private StreamItem getBestStreamByInternetType(List<AdaptiveAudioStream> audioStreamsList, Context context) {
+        CommonUtils utils = new CommonUtils();
+        NetworkType networkType = utils.getNetworkClass(context);
         // I've discovered that old devices has problems with playing high bitrate streams for some reason. SDK 18 threshold was selected blindly
-        if (App.getInstance().getCommonUtils().getAndroidVersion() <= 18) {
+        if (utils.getAndroidVersion() <= 18) {
             return audioStreamsList.get(0);
         } else {
             switch (networkType) {

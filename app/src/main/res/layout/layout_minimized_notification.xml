@@ -9,27 +9,27 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
 
     <RelativeLayout
         android:id="@+id/rl_notification_song_info_block"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_marginTop="10dp">
 
         <TextView
             android:id="@+id/tv_notification_song_title"
+            style="@style/TextViewAutoscroll"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Nirvana - In Bloom"
             android:fontFamily="sans-serif"
+            android:text="Nirvana - In Bloom"
             android:textColor="@color/TitleColorBlack"
-            android:textSize="14sp"
-            style="@style/TextViewAutoscroll"/>
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tv_notification_channel_title"
@@ -48,10 +48,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_toRightOf="@id/rl_notification_song_info_block"
-        android:orientation="horizontal"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/rl_notification_song_info_block">
+        android:layout_toEndOf="@id/rl_notification_song_info_block"
+        android:layout_toRightOf="@id/rl_notification_song_info_block"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/ib_notification_player_back"
