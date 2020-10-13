@@ -39,6 +39,8 @@ import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constan
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.EXTRA_SONG;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYBACK_PROGRESS_CHANGED;
 import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_ERROR;
+import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_PAUSED;
+import static com.github.kotvertolet.youtubeaudioplayer.utilities.common.Constants.PLAYER_RESUMED;
 
 public class PlayerNotificationService extends Service {
 
@@ -53,7 +55,7 @@ public class PlayerNotificationService extends Service {
     private RemoteViews bigNotificationLayout;
     private int notificationId;
     private PlayerStateBroadcastReceiver playerStateBroadcastReceiver;
-    private PlayerChangeStateReceiver playerChangeStateReceiver;
+//    private PlayerChangeStateReceiver playerChangeStateReceiver;
 
     @Override
     public void onCreate() {
@@ -132,7 +134,7 @@ public class PlayerNotificationService extends Service {
                         break;
                 }
             } else
-                Log.i(getClass().getSimpleName(), "Intent with unknown action received: " + action);
+                Log.e(getClass().getSimpleName(), "Intent with unknown action received: " + action);
         }
         return START_NOT_STICKY;
     }
@@ -171,14 +173,14 @@ public class PlayerNotificationService extends Service {
 
     private void registerReceivers() {
         playerStateBroadcastReceiver = new PlayerStateBroadcastReceiver();
-        playerChangeStateReceiver = new PlayerChangeStateReceiver();
+//        playerChangeStateReceiver = new PlayerChangeStateReceiver();
         receiverManager.registerLocalReceiver(playerStateBroadcastReceiver, new IntentFilter(ACTION_PLAYER_STATE_CHANGED));
-        receiverManager.registerLocalReceiver(playerChangeStateReceiver, new IntentFilter(ACTION_PLAYER_CHANGE_STATE));
+//        receiverManager.registerLocalReceiver(playerChangeStateReceiver, new IntentFilter(ACTION_PLAYER_CHANGE_STATE));
     }
 
     private void unregisterReceivers() {
         receiverManager.unregisterReceiver(playerStateBroadcastReceiver);
-        receiverManager.unregisterReceiver(playerChangeStateReceiver);
+//        receiverManager.unregisterReceiver(playerChangeStateReceiver);
     }
 
     private void switchPlayIcon(boolean isPlaying) {
@@ -295,42 +297,54 @@ public class PlayerNotificationService extends Service {
                     break;
                 case Player.STATE_BUFFERING:
                     return;
-                case PLAYBACK_PROGRESS_CHANGED:
-                    return;
                 case Player.STATE_IDLE:
                     small.setImageViewResource(R.id.ib_notification_player_play_pause, R.drawable.ic_player_play_black_40dp);
                     big.setImageViewResource(R.id.ib_notification_player_play_pause, R.drawable.ic_player_play_black_40dp);
                     break;
+                case PLAYBACK_PROGRESS_CHANGED:
+                    return;
                 case PLAYER_ERROR:
                     return;
+                case PLAYER_PAUSED:
+                    switchPlayIcon(false);
+                    Log.i(getClass().getSimpleName(), "Player paused");
+                    break;
+                case PLAYER_RESUMED:
+                    switchPlayIcon(true);
+                    Log.i(getClass().getSimpleName(), "Player resumed");
+                    break;
                 default:
-                    Log.e(this.getClass().getSimpleName(), "Wrong player state code: " + playerStateCode);
+                    Log.e(getClass().getSimpleName(), "Wrong player state code: " + playerStateCode);
                     return;
             }
             buildAndNotify(small, big);
         }
     }
 
-    public class PlayerChangeStateReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int action = intent.getIntExtra(EXTRA_PLAYER_STATE_CODE, -1);
-            RemoteViews small = builder.getContentView();
-            RemoteViews big = builder.getBigContentView();
-            Log.i(this.getClass().getSimpleName(), String.format("Intent with action %s received", intent.getAction()));
-            switch (action) {
-                case PlayerAction.START:
-                    YoutubeSongDto song = intent.getParcelableExtra(EXTRA_SONG);
-                    small = setupSongData(song, small);
-                    big = setupSongData(song, big);
-                    break;
-                case PlayerAction.PAUSE_PLAY:
-                    isPlaying = !isPlaying;
-                    switchPlayIcon(isPlaying);
-                    break;
-            }
-            buildAndNotify(small, big);
-        }
-    }
+//    public class PlayerChangeStateReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            int action = intent.getIntExtra(EXTRA_PLAYER_STATE_CODE, -1);
+//            RemoteViews small = builder.getContentView();
+//            RemoteViews big = builder.getBigContentView();
+//            Log.i(getClass().getSimpleName(), String.format("Intent with action %s received", intent.getAction()));
+//            switch (action) {
+//                case PlayerAction.START:
+//                    YoutubeSongDto song = intent.getParcelableExtra(EXTRA_SONG);
+//                    small = setupSongData(song, small);
+//                    big = setupSongData(song, big);
+//                    Log.i(getClass().getSimpleName(), "Player Notification Start");
+//                    break;
+//                case PlayerAction.PAUSE_PLAY:
+//                    isPlaying = !isPlaying;
+//                    switchPlayIcon(isPlaying);
+//                    Log.i(getClass().getSimpleName(), "Player Notification Pause/Play");
+//                    break;
+//                default:
+//                    Log.e(getClass().getSimpleName(), "Unknown action received");
+//            }
+//            buildAndNotify(small, big);
+//        }
+//    }
 }
