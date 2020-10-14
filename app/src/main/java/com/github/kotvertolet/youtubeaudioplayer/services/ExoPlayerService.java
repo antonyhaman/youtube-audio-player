@@ -156,17 +156,39 @@ public class ExoPlayerService extends Service {
     }
 
     private void changePlaybackState() {
-        Bundle bundle = new Bundle();
+//        Bundle bundle = new Bundle();
         if (exoPlayer != null && exoPlayer.getPlayWhenReady()) {
+            pausePlay();
+//            releasePlayer();
+//            bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYER_PAUSED);
+//            Log.i(TAG, "Playback status changed to 'paused'");
+        } else {
+            continuePlay();
+//            changePlaybackState(this.playbackPosition);
+//            bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYER_RESUMED);
+//            Log.i(TAG, "Playback status changed to 'resumed'");
+        }
+//        utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle, getApplicationContext());
+    }
+
+    private void pausePlay() {
+        if (exoPlayer != null && exoPlayer.getPlayWhenReady()) {
+            Bundle bundle = new Bundle();
             releasePlayer();
             bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYER_PAUSED);
+            utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle, getApplicationContext());
             Log.i(TAG, "Playback status changed to 'paused'");
-        } else {
-            changePlaybackState(this.playbackPosition);
+        }
+    }
+
+    private void continuePlay() {
+        if (mediaSource != null && (exoPlayer == null || !exoPlayer.getPlayWhenReady())) {
+            Bundle bundle = new Bundle();
+            changePlaybackState(playbackPosition);
             bundle.putInt(EXTRA_PLAYER_STATE_CODE, PLAYER_RESUMED);
             Log.i(TAG, "Playback status changed to 'resumed'");
+            utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle, getApplicationContext());
         }
-        utils.sendLocalBroadcastMessage(ACTION_PLAYER_STATE_CHANGED, bundle, getApplicationContext());
     }
 
     private void changePlaybackState(long playbackPosition) {
@@ -349,6 +371,7 @@ public class ExoPlayerService extends Service {
     }
 
     public class HeadsetStateBroadcastReceiver extends BroadcastReceiver {
+        private static final int STATE_DISCONNECTED  = 0x00000000;
 
         private final String[] HEADPHONE_ACTIONS = {
                 Intent.ACTION_HEADSET_PLUG,
@@ -358,22 +381,28 @@ public class ExoPlayerService extends Service {
 
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            int state = 0;
+            int state = STATE_DISCONNECTED;
             // Wired headset monitoring
             if (intent.getAction().equals(HEADPHONE_ACTIONS[0])) {
-                state = intent.getIntExtra("state", 0);
+                state = intent.getIntExtra("state", STATE_DISCONNECTED);
+                Log.i(getClass().getSimpleName(), String.format("Wired headset state change with state: %d", state));
             }
             // Bluetooth monitoring
             // Works up to and including Honeycomb
             else if (intent.getAction().equals(HEADPHONE_ACTIONS[1])) {
-                state = intent.getIntExtra("android.bluetooth.headset.extra.STATE", 0);
+                state = intent.getIntExtra("android.bluetooth.headset.extra.STATE", STATE_DISCONNECTED);
+                Log.i(getClass().getSimpleName(), String.format("Bluetooth 1 headset state change with state: %d", state));
             }
             // Works for Ice Cream Sandwich
             else if (intent.getAction().equals(HEADPHONE_ACTIONS[2])) {
-                state = intent.getIntExtra("android.bluetooth.profile.extra.STATE", 0);
+                state = intent.getIntExtra("android.bluetooth.profile.extra.STATE", STATE_DISCONNECTED);
+                Log.i(getClass().getSimpleName(), String.format("Bluetooth 2 headset state change with state: %d", state));
             }
-            if (state == 0 && exoPlayer.getPlayWhenReady()) {
-                exoPlayer.setPlayWhenReady(false);
+            if (state == STATE_DISCONNECTED) {
+//                exoPlayer.setPlayWhenReady(false);
+                pausePlay();
+            } else {
+                continuePlay();
             }
         }
     }
